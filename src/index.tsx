@@ -1,9 +1,12 @@
 import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
-import { Desktop } from "./screens/Desktop";
+import { BrowserRouter } from "react-router-dom";
+import App from "./Routes";
 
 createRoot(document.getElementById("app") as HTMLElement).render(
   <StrictMode>
-    <Desktop />
+    <BrowserRouter>
+      <App/>
+    </BrowserRouter>
   </StrictMode>,
 );
