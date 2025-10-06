@@ -75,14 +75,12 @@ const VerifyIdentityStep4 = (): JSX.Element => {
         </button>
 
         {/* Skip */}
-        <p className="text-sm">
-          <button
-            onClick={() => navigate("/dashboard")}
-            className="font-semibold underline"
-          >
+     <button className="text-sm mt-2">
+          <Link to="/dashboard"
+          className="font-semibold underline">
             Set up later, skip to dashboard now?
-          </button>
-        </p>
+            </Link>
+            </button>
       </main>
     </div>
   );

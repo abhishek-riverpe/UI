@@ -55,11 +55,12 @@ const VerifyIdentityStep1 = () => {
 </button>
 
             {/* Skip link */}
-            <p className="text-sm mt-2">
-          <a href="" className="font-semibold underline">
+            <button className="text-sm mt-2">
+          <Link to="/dashboard"
+          className="font-semibold underline">
             Set up later, skip to dashboard now?
-            </a>
-            </p>
+            </Link>
+            </button>
         </div>
     </div>
   );

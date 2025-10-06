@@ -8,9 +8,7 @@ import VerifyIdentityStep4 from "./screens/onBoardingPages/DocConformation";
 import SelectIDType from "./screens/onBoardingPages/VerificationStep-3";
 import QrScanner from "./screens/onBoardingPages/QrScanner";
 import VerificationSuccess from "./screens/onBoardingPages/VerificationSuccess";
-import FreelancersPage from "./screens/LandingPages/FreelancersPage";
-import AgenciesPage from "./screens/LandingPages/AgenciesPage";
-import MarketPlace from "./screens/LandingPages/MarketPlace";
+import { Dashboard } from "./screens/DashboardPages/Dashboard";
 
 export default function App() {
   return (
@@ -25,9 +23,7 @@ export default function App() {
       <Route path="/verify-identityStep-4" element={<VerifyIdentityStep4/>} />
       <Route path="/verify-identityStep-5" element={<QrScanner/>} />
       <Route path="/VerificationSuccess" element={<VerificationSuccess/>} />
-      {/* <Route path="/forfreelancers" element={<FreelancersPage />} />
-      <Route path="/forAgencies" element={<AgenciesPage />} />
-      <Route path="/forMarketPlace" element={<MarketPlace />} /> */}
+      <Route path="/dashboard" element={<Dashboard/>} />
       
     </Routes>
   );

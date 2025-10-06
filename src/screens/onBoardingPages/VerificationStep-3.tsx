@@ -132,11 +132,12 @@ const SelectIDType = () => {
         >
           Continue
         </button>
-        <p className="text-sm">
-          <a href="#" className="font-semibold underline">
+        <button className="text-sm mt-2">
+          <Link to="/dashboard"
+          className="font-semibold underline">
             Set up later, skip to dashboard now?
-          </a>
-        </p>
+            </Link>
+            </button>
       </div>
     </div>
   );

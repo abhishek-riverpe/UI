@@ -51,12 +51,12 @@ const QrScanner = (): JSX.Element => {
         </button>
 
         {/* Skip */}
-        <button
-          onClick={() => navigate("/dashboard")}
-          className="mt-4 text-sm font-semibold underline"
-        >
-          Set up later, skip to dashboard now?
-        </button>
+   <button className="text-sm mt-2">
+          <Link to="/dashboard"
+          className="font-semibold underline">
+            Set up later, skip to dashboard now?
+            </Link>
+            </button>
       </main>
     </div>
   );
