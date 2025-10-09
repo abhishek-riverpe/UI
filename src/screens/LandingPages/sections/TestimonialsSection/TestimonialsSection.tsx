@@ -66,26 +66,28 @@ export const TestimonialsSection = (): JSX.Element => {
     }
   };
   return (
-    <section className="relative w-full py-12 mt-28 overflow-hidden">
+    <section className="relative w-full py-12 overflow-hidden">
       <div className="container mx-auto px-10">
         <div className="flex flex-col items-center gap-2.5 mb-[50px]">
           <div className="flex items-center justify-center gap-2.5">
-            <h2 className="[font-family:'Neue_Haas_Grotesk_Display_Pro-Mediu',Helvetica] font-semibold text-black text-5xl text-center tracking-[0] leading-[normal]">
-              Why people
-            </h2>
-
-            <img 
-            src="/heart.png"
-            className="w-[95px] h-[95px] " />
-
-            <h2 className="[font-family:'Neue_Haas_Grotesk_Display_Pro-Mediu',Helvetica] font-semibold text-black text-5xl text-center tracking-[0] leading-[normal]">
-              Riverpe
+            <h2
+              className="font-headings font-semibold text-black text-[48px] text-center leading-[100%] tracking-[0px] align-middle"
+              style={{
+                fontStyle: 'normal', // 65 Medium is typically 'normal' in CSS, but if you have a custom font-weight for 500/600, adjust accordingly
+              }}
+            >
+              Why people choose Riverpe
             </h2>
           </div>
 
-          <p className="[font-family:'Archivo',Helvetica] font-normal text-[#1f1f1f] text-2xl text-center tracking-[0] leading-9 max-w-4xl">
-            Hear stories from freelancers to agencies on keeping more of every
-            payout.
+          <p
+            className="font-body font-normal text-[24px] leading-[36px] tracking-[0px] text-center align-middle text-[#1f1f1f] max-w-4xl"
+            style={{
+              fontStyle: 'normal',
+              fontWeight: 400,
+            }}
+          >
+            Hear stories from freelancers to agencies on keeping more of every payout.
           </p>
         </div>
 

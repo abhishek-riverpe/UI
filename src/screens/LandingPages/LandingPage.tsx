@@ -126,11 +126,11 @@ export const LandingPage = (): JSX.Element => {
       </header>
 
       <main className="flex flex-col items-start relative self-stretch w-full flex-[0_0_auto]">
-        <HeroSection type={type ?? ""} />
+        {/* <HeroSection type={type ?? ""} /> */}
         <GoogleRatesSection />
         <ComparisonSection />
         <HowItWorksSection />
-        <SecuritySection />
+        {/* <SecuritySection /> */}
         <TestimonialsSection />
         <CallToActionSection />
       </main>

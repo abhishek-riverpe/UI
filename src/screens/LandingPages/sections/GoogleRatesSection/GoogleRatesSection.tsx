@@ -20,15 +20,101 @@ export const GoogleRatesSection = (): JSX.Element => {
   ];
 
   return (
-    <section className="mt-20 relative w-full bg-white mb-24">
-      <div className="flex flex-col items-center gap-[60px] px-4 py-12 max-w-[1229px] mx-auto">
-        <header className="flex flex-col items-center gap-2.5 w-full">
-          <h2 className="text-center [font-family:'Neue_Haas_Grotesk_Display_Pro-Mediu',Helvetica] text-black font-bold text-5xl tracking-[0] leading-[normal]">
-            Receive international payments at Google rates
-          </h2>
-        </header>
+    <section className="my-12 relative w-full bg-white">
+      <div className="max-w-[1229px] mx-auto">
+        <div className="flex items-center gap-[150px] w-full">
 
-        <div className="mt-10 flex items-center gap-[150px] w-full">
+         <div className="flex flex-col w-[519px] items-start gap-20">
+             <div className="flex flex-col items-start gap-3">
+               <div className="font-light text-black text-[20px] leading-[1.088em]">
+                 powered by <span className="text-[#635BFF] font-bold">stripe</span>
+               </div>
+               <p
+                 className="[font-family:'Font family/headings',Helvetica] font-semibold text-[#1f1f1f] text-[52px] tracking-[0] leading-[100%] align-middle"
+                 style={{ fontStyle: "normal", fontWeight: 600 }}
+               >
+                 Instant transfer with Google exchange rate
+               </p>
+             </div>
+
+            <div className="flex flex-col items-start gap-[5px] w-full">
+              <div
+                style={{
+                  background: "linear-gradient(135deg, rgba(0, 90, 238, 0.75) 0%, rgba(34, 226, 162, 0.75) 100%)",
+                  WebkitBackgroundClip: "text",
+                  WebkitTextFillColor: "transparent",
+                  fontFamily: "'Font family/headings', Helvetica, Arial, sans-serif",
+                  fontWeight: 600,
+                  fontStyle: "normal",
+                  fontSize: "72px",
+                  lineHeight: "100%",
+                  letterSpacing: "0px",
+                  verticalAlign: "middle",
+                }}
+              >
+                0.25%
+              </div>
+
+              <div className="inline-flex flex-col items-left gap-1">
+                <div className="[font-family:'Archivo',Helvetica] font-normal text-[#1f1f1f] text-xl text-center tracking-[0] leading-[30px]">
+                  Fee per transaction
+                </div>
+
+                <div
+                  className="[font-family:'Font family/body',Helvetica] font-light text-[#1f1f1f] text-[14px] tracking-[0] leading-[21px] align-middle"
+                  style={{
+                    fontFamily: "'Font family/body', Helvetica, Arial, sans-serif",
+                    fontWeight: 300,
+                    fontStyle: "normal",
+                    fontSize: "14px",
+                    lineHeight: "21px",
+                    letterSpacing: "0px",
+                    verticalAlign: "middle",
+                  }}
+                >
+                  (All inclusive)
+                </div>
+              </div>
+            </div>
+
+            <div className="flex flex-col w-[405px] items-start gap-4">
+              <Button className="w-[253px] h-auto bg-[#005aee] hover:bg-[#0047bb] px-6 py-4 rounded-lg">
+                <span className="[font-family:'Archivo',Helvetica] font-semibold text-white text-base text-center tracking-[0] leading-[normal] whitespace-nowrap">
+                  Get Started
+                </span>
+              </Button>
+
+              <p
+                style={{
+                  fontFamily: "'Inter', Helvetica, Arial, sans-serif",
+                  fontWeight: 400,
+                  fontStyle: "normal",
+                  fontSize: "14px",
+                  lineHeight: "20px",
+                  letterSpacing: "0px",
+                  color: "#575757",
+                }}
+                className="tracking-[0]"
+              >
+                Custom fee for transactions above USD 50,000.&nbsp;&nbsp;
+                <span
+                  className="text-[#005aee] cursor-pointer hover:underline"
+                  style={{
+                    fontFamily: "'Inter', Helvetica, Arial, sans-serif",
+                    fontWeight: 400,
+                    fontStyle: "normal",
+                    fontSize: "14px",
+                    lineHeight: "20px",
+                    letterSpacing: "0px",
+                  }}
+                >
+                  Talk to us →
+                </span>
+              </p>
+            </div>
+          </div>
+
+
           <div className="w-[540px] h-[640px] bg-[#dee7f6] rounded-3xl overflow-hidden p-8">
             <Card className="w-full h-full bg-white rounded-2xl overflow-hidden border-0 shadow-none">
               <CardContent className="flex flex-col items-center justify-center gap-8 p-[21px] pt-[27px] h-full">
@@ -180,45 +266,7 @@ export const GoogleRatesSection = (): JSX.Element => {
             </Card>
           </div>
 
-          <div className="flex flex-col w-[519px] items-start gap-20">
-            <p className="[font-family:'Neue_Haas_Grotesk_Display_Pro-Mediu',Helvetica] font-semibold text-[#1f1f1f] text-[32px] tracking-[0] leading-[48px]">
-              Get paid to a US-dollar account, convert at Google exchange rate,
-              and save 3-5% on every payout.
-            </p>
-
-            <div className="flex flex-col items-start gap-[5px] w-full">
-              <div className="bg-gradient-to-r from-[#005aee]/75 to-[#22e2a2]/75 bg-clip-text text-transparent font-semibold text-7xl leading-normal font-sans">
-                0.25%
-              </div>
-
-              <div className="inline-flex flex-col items-center gap-1">
-                <div className="[font-family:'Archivo',Helvetica] font-normal text-[#1f1f1f] text-xl text-center tracking-[0] leading-[30px]">
-                  Fee per transaction
-                </div>
-
-                <div className="[font-family:'Archivo',Helvetica] font-light text-[#1f1f1f] text-sm tracking-[0] leading-[21px]">
-                  (All inclusive)
-                </div>
-              </div>
-            </div>
-
-            <div className="flex flex-col w-[405px] items-start gap-4">
-              <Button className="w-[253px] h-auto bg-[#005aee] hover:bg-[#0047bb] px-6 py-4 rounded-lg">
-                <span className="[font-family:'Archivo',Helvetica] font-semibold text-white text-base text-center tracking-[0] leading-[normal] whitespace-nowrap">
-                  Get Started
-                </span>
-              </Button>
-
-              <p className="[font-family:'Inter',Helvetica] font-normal text-sm tracking-[0] leading-5">
-                <span className="text-[#575757]">
-                  Custom fee for transactions above USD 50,000.&nbsp;&nbsp;
-                </span>
-                <span className="text-[#005aee] cursor-pointer hover:underline">
-                  Talk to us →
-                </span>
-              </p>
-            </div>
-          </div>
+        
         </div>
       </div>
     </section>
