@@ -1,4 +1,3 @@
-import { Avatar } from "@/components/ui/avatar";
 import { Clock, CheckCircle2 } from "lucide-react";
 
 interface TransactionItemProps {
@@ -50,11 +49,8 @@ export const TransactionItem = ({
     >
       {/* Left Side - Avatar and Info */}
       <div className="flex items-center gap-4">
-        <Avatar className="bg-blue-50 text-blue-600">
-          <span className="text-sm font-semibold">
-            {name.split(' ').map(n => n[0]).join('').toUpperCase()}
-          </span>
-        </Avatar>
+       
+        <img src="/avatar.svg" alt="avatar" className="w-10 h-10" />
         
         <div>
           <div className="font-semibold text-gray-900">{name}</div>

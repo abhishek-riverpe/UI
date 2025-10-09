@@ -131,11 +131,11 @@ export const RecentTransactions = ({
           return (
             <Card
               key={tx.id ?? `${tx.name}-${tx.amount}`}
-              className={`p-6 border border-gray-200 rounded-2xl bg-white hover:shadow-sm transition-shadow`}
+              className={`p-6 border border-gray-200 rounded-2xl bg-white`}
             >
               <div className="flex items-start gap-4">
                 {/* Left: avatar + text */}
-                <div className="shrink-0">{tx.icon}</div>
+                <img src="/avatar.svg" alt="avatar" className="w-10 h-10" />
 
                 <div className="flex-1 min-w-0">
                   <p className="[font-family:'Archivo',Helvetica] font-semibold text-base text-black truncate">

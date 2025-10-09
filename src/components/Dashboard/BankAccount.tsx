@@ -89,7 +89,7 @@ export default function BankAccount({
     switch (verificationStatus) {
       case "not_verified":
         return {
-          icon: <IdCard className="w-6 h-6 text-gray-700" />,
+          icon: <img src="/id-card.svg" alt="" />,
           title: "Verify to activate your US bank account",
           caption:
             "Complete a quick ID check to enable international payments and protect your account.",
@@ -97,7 +97,7 @@ export default function BankAccount({
         };
       case "pending":
         return {
-          icon: <Clock className="w-6 h-6 text-gray-700" />,
+          icon: <img src="/pending.svg" alt="" />,
           title: "Verification in progress",
           caption:
             "We’re reviewing your details — this usually takes less than an hour.",
@@ -105,7 +105,7 @@ export default function BankAccount({
         };
       case "rejected":
         return {
-          icon: <AlertCircle className="w-6 h-6 text-gray-700" />,
+          icon: <img src="/issue.svg" alt="" />,
           title: "Verification issue",
           caption:
             "We couldn’t verify your details. Please try again with a clear ID and matching legal name.",
@@ -113,7 +113,7 @@ export default function BankAccount({
         };
       case "verified":
         return {
-          icon: <CheckCircle2 className="w-6 h-6 text-emerald-600" />,
+          icon: <img src="/verified.svg" alt="" />,
           title: "Your account is now verified!",
           caption: "Open your first US bank account and enjoy all of Riverpe’s features!",
           cta: "Open your US bank account",
@@ -184,7 +184,7 @@ export default function BankAccount({
           <button
             type="button"
             onClick={() => onBannerCta?.()}
-            className="rounded-full bg-[#0B5FFF] text-white px-4 py-2 [font-family:'Archivo',Helvetica] font-semibold text-sm hover:brightness-95"
+            className="rounded-xl bg-[#0B5FFF] text-white px-4 py-2 [font-family:'Archivo',Helvetica] font-semibold text-sm hover:brightness-95"
           >
             {banner.cta}
           </button>

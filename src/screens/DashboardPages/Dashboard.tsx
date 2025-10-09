@@ -98,6 +98,7 @@ const transactions: RecentTransaction[] = [
         "Transfer your US funds from your platform balance to your linked INR bank account in a few taps.",
       icon: <Download className="w-8 h-8" />,
       onClick: () => alert("Withdraw to INR clicked"),
+      disabledReason:"KYC"
     },
     {
       id: "share-us-bank",
@@ -121,13 +122,13 @@ const transactions: RecentTransaction[] = [
     <div className="w-full">
       <BankAccount 
         verificationStatus="verified" 
-        accountCreated={true} 
+        accountCreated={false} 
         accountBalance={10000}
         onShowBankDetails={() => alert("Show bank details")} 
       />
 
       <div className="mt-8">
-        <QuickActions actions={activeCards} />
+        <QuickActions actions={activeCards}/>
       </div>
 
       <div className="mt-8">

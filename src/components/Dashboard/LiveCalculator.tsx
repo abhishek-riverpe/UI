@@ -125,8 +125,8 @@ export default function LiveCalculator() {
   const topLabel = srcIsUSD ? "USD" : "INR";
   const bottomLabel = srcIsUSD ? "INR" : "USD";
 
-  const topFlag = srcIsUSD ? <USFlag /> : <INFlag />;
-  const bottomFlag = srcIsUSD ? <INFlag /> : <USFlag />;
+  const topFlag = srcIsUSD ? '/usa-flag.svg' : '/india-flag.svg';
+  const bottomFlag = srcIsUSD ? '/india-flag.svg' : '/usa-flag.svg';
 
   const bottomFormatted = srcIsUSD ? fmtINR(targetVal || 0) : fmtUSD(targetVal || 0);
 
@@ -195,8 +195,8 @@ export default function LiveCalculator() {
             aria-label={`Amount in ${topLabel}`}
             disabled={isLoadingRate}
           />
-          <div className="flex items-center gap-3 pl-4">
-            {topFlag}
+          <div className="flex items-center gap-3 pr-6">
+            <img src={topFlag} alt="Top Flag" />
             <span className="[font-family:'Archivo',Helvetica] font-semibold text-lg text-black">
               {topLabel}
             </span>
@@ -221,8 +221,8 @@ export default function LiveCalculator() {
           <div className="[font-family:'Archivo',Helvetica] font-bold text-2xl">
             {bottomFormatted}
           </div>
-          <div className="flex items-center gap-3 pl-4">
-            {bottomFlag}
+          <div className="flex items-center gap-3 pr-4">
+            <img src={bottomFlag} alt="Bottom-flag" />
             <span className="[font-family:'Archivo',Helvetica] font-semibold text-lg text-black">
               {bottomLabel}
             </span>
