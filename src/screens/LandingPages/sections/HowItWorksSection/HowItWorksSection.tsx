@@ -6,7 +6,7 @@ const steps = [
   {
     id: 1,
     imagePosition: "left",
-    image: "/Mobile.png",
+    image: "/mobile.png",
     title: "Sign up and open your USD account",
     description:
       "Create your account in minutes and complete quick KYC (PAN + ID) to unlock USD (and EUR) receiving details.",
@@ -82,13 +82,13 @@ export const HowItWorksSection = (): JSX.Element => {
                 <h3 className="font-bold text-black text-[2.6rem]">
                   {step.title}
                 </h3>
-                <p className="font-light text-[#1f1f1f] text-xl">
+                <p className="font-light text-[#1f1f1f] text-[18px]">
                   {step.description}
                 </p>
               </div>
 
               <div className="flex items-center gap-6">
-                <Button className="bg-blue-600 hover:bg-blue-700 text-white px-8 py-3 rounded-lg font-semibold">
+                <Button className="bg-blue-600 hover:bg-blue-700 text-white px-14 py-5 rounded-lg font-semibold">
                   Get Started
                 </Button>
                 <Button 
