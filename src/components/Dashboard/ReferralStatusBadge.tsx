@@ -1,39 +1,37 @@
 interface ReferralStatusBadgeProps {
-  status: "rewarded" | "qualified" | "verified" | "signed_up" | "invited";
+  status: "qualified" | "signedup" | "invited";
 }
 
 export const ReferralStatusBadge = ({ status }: ReferralStatusBadgeProps): JSX.Element => {
   const getBadgeConfig = () => {
     switch (status) {
-      case "rewarded":
-        return {
-          text: "✓ Rewarded",
-          className: "bg-green-100 text-green-800"
-        };
       case "qualified":
         return {
           text: "Qualified",
-          className: "bg-green-100 text-green-800"
+          bgColor: "#E2F5EE",
+          borderColor: "#1FCB92",
+          textColor: "#137C59"
         };
-      case "verified":
-        return {
-          text: "Verified",
-          className: "bg-blue-100 text-blue-800"
-        };
-      case "signed_up":
+      case "signedup":
         return {
           text: "Signed up",
-          className: "bg-purple-100 text-purple-800"
+          bgColor: "#DEE7F6",
+          borderColor: "#0051D6",
+          textColor: "#003283"
         };
       case "invited":
         return {
           text: "Invited",
-          className: "bg-gray-100 text-gray-800"
+          bgColor: "#E2E2E2",
+          borderColor: "#575757",
+          textColor: "#222222"
         };
       default:
         return {
           text: "Unknown",
-          className: "bg-gray-100 text-gray-800"
+          bgColor: "#E2E2E2",
+          borderColor: "#575757",
+          textColor: "#222222"
         };
     }
   };
@@ -41,8 +39,27 @@ export const ReferralStatusBadge = ({ status }: ReferralStatusBadgeProps): JSX.E
   const config = getBadgeConfig();
 
   return (
-    <span className={`px-3 py-1 rounded-full text-xs font-medium ${config.className}`}>
-      {config.text}
-    </span>
+    <div 
+      className="inline-flex items-center justify-center"
+      style={{
+        gap: "8px",
+        padding: "4px 12px",
+        backgroundColor: config.bgColor,
+        border: `2px solid ${config.borderColor}`,
+        borderRadius: "9999px"
+      }}
+    >
+      <span 
+        style={{
+          fontFamily: "'Neue Haas Grotesk Display Pro', -apple-system, BlinkMacSystemFont, sans-serif",
+          fontWeight: 600,
+          fontSize: "16px",
+          lineHeight: "1.5",
+          color: config.textColor
+        }}
+      >
+        {config.text}
+      </span>
+    </div>
   );
 };
