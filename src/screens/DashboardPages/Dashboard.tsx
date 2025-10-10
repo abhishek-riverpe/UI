@@ -121,7 +121,7 @@ const transactions: RecentTransaction[] = [
   return (
     <div className="w-full">
       <BankAccount 
-        verificationStatus="verified" 
+        verificationStatus="not_verified" 
         accountCreated={false} 
         accountBalance={10000}
         onShowBankDetails={() => alert("Show bank details")} 

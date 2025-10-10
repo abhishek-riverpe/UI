@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { CircleX } from "lucide-react";
 
 interface AmountInputProps {
   amount: number;
@@ -37,32 +38,52 @@ export const AmountInput = ({
     }
   };
 
+  const hasInsufficientFunds = amount > availableBalance;
+
   return (
     <div className="mb-6">
-      <div className="text-center">
-        <div 
-          onClick={handleAmountClick}
-          className="text-4xl font-bold text-gray-900 cursor-pointer border-b-2 border-transparent hover:border-gray-300 transition-colors mb-2"
-        >
-          {isEditing ? (
-            <input
-              type="text"
-              value={tempAmount}
-              onChange={(e) => setTempAmount(e.target.value)}
-              onBlur={handleAmountSubmit}
-              onKeyDown={handleKeyPress}
-              className="text-4xl font-bold text-gray-900 bg-transparent border-none outline-none text-center w-full"
-              autoFocus
-            />
-          ) : (
-            `${currency}${amount.toFixed(2)}`
-          )}
+      <div className="text-center flex flex-col items-center gap-10">
+        <div className="w-full flex flex-col items-center gap-3">
+          <div className="flex flex-col items-center">
+            <div 
+              onClick={handleAmountClick}
+              className="text-[70px] leading-[1.2] font-bold text-black cursor-pointer"
+              style={{ fontFamily: 'Neue Haas Grotesk Display Pro, sans-serif' }}
+            >
+              {isEditing ? (
+                <input
+                  type="text"
+                  value={tempAmount}
+                  onChange={(e) => setTempAmount(e.target.value)}
+                  onBlur={handleAmountSubmit}
+                  onKeyDown={handleKeyPress}
+                  className="text-[70px] leading-[1.2] font-bold text-black bg-transparent border-none outline-none text-center"
+                  style={{ fontFamily: 'Neue Haas Grotesk Display Pro, sans-serif' }}
+                  autoFocus
+                />
+              ) : (
+                `$${amount.toFixed(2)}`
+              )}
+            </div>
+            {/* Small black underline */}
+            <div className="w-72 h-1 bg-black mt-1"></div>
+          </div>
+          
+          <div className="flex flex-col items-center gap-2 text-base font-medium text-[#222222]" style={{ fontFamily: 'Neue Haas Grotesk Display Pro, sans-serif' }}>
+            <div>Available: ${availableBalance.toFixed(2)}</div>
+            <div className="text-[#8C8C8C]">After withdrawal ${(availableBalance - amount).toFixed(2)}</div>
+          </div>
         </div>
-        
-        <div className="text-sm text-gray-600 space-y-1">
-          <div>Available: {currency}{availableBalance.toFixed(2)}</div>
-          <div>After withdrawal {currency}{(availableBalance - amount).toFixed(2)}</div>
-        </div>
+
+        {/* Insufficient Funds Warning */}
+        {hasInsufficientFunds && amount > 0 && (
+          <div className="flex items-center justify-center gap-2 w-full">
+            <CircleX className="w-4 h-4 text-[#E7000B]" strokeWidth={2} />
+            <p className="text-base text-[#E7000B]" style={{ fontFamily: 'Archivo, sans-serif' }}>
+              Oops! You don't have enough funds to complete this withdrawal.
+            </p>
+          </div>
+        )}
       </div>
     </div>
   );

@@ -53,91 +53,116 @@ export const LinkBankAccountModal = ({
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-      <div className="bg-white rounded-lg p-6 w-full max-w-md mx-4">
+      <div className="bg-white rounded-3xl p-6 w-full max-w-lg mx-4">
         {/* Header */}
         <div className="flex items-center justify-between mb-6">
-          <div className="flex items-center">
-            <Share2 className="w-5 h-5 text-blue-600 mr-2" />
-            <h2 className="text-xl font-bold">Link INR Bank Account</h2>
+          <div className="flex items-center gap-3">
+            <Share2 className="w-8 h-8" />
+            <h2 className="text-2xl font-semibold text-[#222222]">Link INR Bank Account</h2>
           </div>
           <button
             onClick={onClose}
-            className="text-gray-400 hover:text-gray-600 transition-colors"
+            className="p-1.5 hover:bg-gray-100 rounded-full transition-colors"
           >
-            <X className="w-5 h-5" />
+            <X className="w-3 h-3" />
           </button>
         </div>
 
         {/* Description */}
-        <p className="text-gray-600 mb-6">
+        <p className="text-black text-base leading-6 mb-6">
           Add your INR bank account to receive withdrawals from your USD account.
         </p>
 
         {/* Form */}
         <form onSubmit={handleSubmit} className="space-y-4">
           {/* Bank Name */}
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
+          <div className="space-y-2">
+            <label className="block text-base font-normal text-black">
               Bank Name
             </label>
-            <Input
-              type="text"
-              placeholder="Select or type bank name"
-              value={formData.bankName}
-              onChange={(e) => handleInputChange('bankName', e.target.value)}
-              required
-            />
+            <div className="relative">
+              <div className="absolute left-3 top-1/2 transform -translate-y-1/2">
+                <img src="/mail.svg" alt="" className="w-6 h-6" />
+              </div>
+              <Input
+                type="text"
+                placeholder="Select or type bank name"
+                value={formData.bankName}
+                onChange={(e) => handleInputChange('bankName', e.target.value)}
+                className="pl-10 pr-6 py-3 h-12 border border-[#ACACAC] rounded-xl text-base placeholder:text-[#8C8C8C]"
+                required
+              />
+            </div>
           </div>
 
           {/* Account Number */}
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
+          <div className="space-y-2">
+            <label className="block text-base font-normal text-black">
               Account Number
             </label>
-            <Input
-              type="text"
-              placeholder="Enter account number"
-              value={formData.accountNumber}
-              onChange={(e) => handleInputChange('accountNumber', e.target.value)}
-              required
-            />
+            <div className="relative">
+              <div className="absolute left-3 top-1/2 transform -translate-y-1/2">
+                <img src="/mail.svg" alt="" className="w-6 h-6" />
+              </div>
+              <Input
+                type="text"
+                placeholder="Enter account number"
+                value={formData.accountNumber}
+                onChange={(e) => handleInputChange('accountNumber', e.target.value)}
+                className="pl-10 pr-6 py-3 h-12 border border-[#ACACAC] rounded-xl text-base placeholder:text-[#8C8C8C]"
+                required
+              />
+            </div>
           </div>
 
           {/* IFSC Code */}
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
+          <div className="space-y-2">
+            <label className="block text-base font-normal text-black">
               IFSC Code
             </label>
-            <Input
-              type="text"
-              value={formData.ifscCode}
-              onChange={(e) => handleInputChange('ifscCode', e.target.value)}
-              required
-            />
+            <div className="relative">
+              <div className="absolute left-3 top-1/2 transform -translate-y-1/2">
+                <img src="/mail.svg" alt="" className="w-6 h-6" />
+              </div>
+              <Input
+                type="text"
+                placeholder="HDFC0001234"
+                value={formData.ifscCode}
+                onChange={(e) => handleInputChange('ifscCode', e.target.value)}
+                className="pl-10 pr-6 py-3 h-12 border border-[#ACACAC] rounded-xl text-base placeholder:text-[#8C8C8C]"
+                required
+              />
+            </div>
           </div>
 
           {/* Account Holder Name */}
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
+          <div className="space-y-2">
+            <label className="block text-base font-normal text-black">
               Account Holder Name
             </label>
-            <Input
-              type="text"
-              placeholder="Enter account holder name"
-              value={formData.accountHolderName}
-              onChange={(e) => handleInputChange('accountHolderName', e.target.value)}
-              required
-            />
-            <div className="flex items-center mt-2 text-blue-600 text-sm">
-              <Info className="w-4 h-4 mr-1" />
-              <span>Must match your KYC verified name</span>
+            <div className="relative">
+              <div className="absolute left-3 top-1/2 transform -translate-y-1/2">
+                <img src="/mail.svg" alt="" className="w-6 h-6" />
+              </div>
+              <Input
+                type="text"
+                placeholder="Enter account holder name"
+                value={formData.accountHolderName}
+                onChange={(e) => handleInputChange('accountHolderName', e.target.value)}
+                className="pl-10 pr-6 py-3 h-12 border border-[#ACACAC] rounded-xl text-base placeholder:text-[#8C8C8C]"
+                required
+              />
+            </div>
+            <div className="flex items-center gap-2">
+              <Info className="w-4 h-4 text-[#005AEE]" />
+              <span className="text-base text-[#005AEE]">Must match your KYC verified name</span>
             </div>
           </div>
 
           {/* Submit Button */}
           <Button
             type="submit"
-            className="w-full bg-blue-600 hover:bg-blue-700 text-white"
+            className="w-full bg-[#005AEE] hover:bg-[#0047CC] text-white py-3 px-6 rounded-xl text-base font-bold h-auto"
             disabled={isLoading}
           >
             {isLoading ? "Verifying..." : "Verify and Link Account"}

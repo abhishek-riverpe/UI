@@ -1,6 +1,6 @@
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Building2 } from "lucide-react";
+import { Landmark } from "lucide-react";
 
 interface BankAccount {
   id: string;
@@ -29,16 +29,7 @@ export const BankAccountSelector = ({
         <div className="flex justify-center mb-8">
           <div className="relative">
             {/* Blue coins illustration */}
-            <div className="w-32 h-32 bg-blue-100 rounded-full flex items-center justify-center">
-              <div className="w-20 h-20 bg-blue-200 rounded-full flex items-center justify-center">
-                <div className="w-12 h-12 bg-blue-300 rounded-full"></div>
-              </div>
-            </div>
-            {/* Small coins around */}
-            <div className="absolute -top-2 -left-2 w-6 h-6 bg-blue-200 rounded-full"></div>
-            <div className="absolute -top-1 -right-3 w-4 h-4 bg-blue-300 rounded-full"></div>
-            <div className="absolute -bottom-1 -left-3 w-5 h-5 bg-blue-200 rounded-full"></div>
-            <div className="absolute -bottom-2 -right-1 w-7 h-7 bg-blue-300 rounded-full"></div>
+            <img src="/coins.svg" alt="" />
           </div>
         </div>
 
@@ -56,7 +47,7 @@ export const BankAccountSelector = ({
           
           <Button 
             onClick={onLinkAccount}
-            className="bg-blue-600 hover:bg-blue-700 text-white px-8 py-3 text-lg"
+            className="bg-blue-600 rounded-xl hover:bg-blue-700 text-white px-[38%] py-6 text-lg"
           >
             Link your INR account
           </Button>
@@ -69,10 +60,12 @@ export const BankAccountSelector = ({
     <div className="mb-8">
       <h1 className="text-2xl font-bold mb-6">Withdraw funds</h1>
       
-      <Card className="p-4 mb-6">
+      <Card className="p-4 mb-6 shadow-none border-[#ACACAC]">
         <div className="flex items-center justify-between">
           <div className="flex items-center">
-            <Building2 className="w-6 h-6 text-blue-600 mr-3" />
+            <div className="bg-blue-600 rounded-full flex items-center justify-center w-10 h-10 mr-3">
+              <Landmark className="w-6 h-6 text-white" />
+            </div>
             <div>
               <div className="font-semibold">
                 {selectedAccount.bankName} • {selectedAccount.accountNumber.slice(-4)}
@@ -82,13 +75,12 @@ export const BankAccountSelector = ({
               </div>
             </div>
           </div>
-          <Button 
-            variant="outline" 
-            size="sm"
+          <button 
             onClick={onAccountChange}
+            className="bg-blue-600 px-4 py-2 rounded-2xl text-white font-archivo"
           >
             Change
-          </Button>
+          </button>
         </div>
       </Card>
     </div>

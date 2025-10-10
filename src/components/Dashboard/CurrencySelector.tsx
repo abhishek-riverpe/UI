@@ -4,7 +4,6 @@ import { ChevronDown } from "lucide-react";
 interface Currency {
   code: string;
   name: string;
-  flag: string;
 }
 
 interface CurrencySelectorProps {
@@ -13,9 +12,7 @@ interface CurrencySelectorProps {
 }
 
 const currencies: Currency[] = [
-  { code: "USD", name: "US Dollars", flag: "🇺🇸" },
-  { code: "EUR", name: "Euros", flag: "🇪🇺" },
-  { code: "GBP", name: "British Pounds", flag: "🇬🇧" },
+  { code: "USD", name: "US Dollars" },
 ];
 
 export const CurrencySelector = ({ 
@@ -36,7 +33,7 @@ export const CurrencySelector = ({
           className="w-full p-4 border border-gray-300 rounded-lg bg-white flex items-center justify-between hover:border-gray-400 transition-colors"
         >
           <div className="flex items-center">
-            <span className="text-lg mr-3">{selectedCurrency.flag}</span>
+            <img src="/usa-flag.svg" alt="" className="size-10 mr-3" />
             <div className="text-left">
               <div className="font-semibold">{selectedCurrency.code}</div>
               <div className="text-sm text-gray-600">{selectedCurrency.name}</div>
@@ -56,7 +53,7 @@ export const CurrencySelector = ({
                 }}
                 className="w-full p-4 flex items-center hover:bg-gray-50 transition-colors"
               >
-                <span className="text-lg mr-3">{currency.flag}</span>
+                <img src="/usa-flag.svg" alt="" className="size-10 mr-3" />
                 <div className="text-left">
                   <div className="font-semibold">{currency.code}</div>
                   <div className="text-sm text-gray-600">{currency.name}</div>
