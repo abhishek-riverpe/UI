@@ -1,4 +1,4 @@
-import { ChevronDown, Filter, X } from "lucide-react";
+import { ChevronDown, Filter, FilterX, X } from "lucide-react";
 
 interface FilterOption {
   label: string;
@@ -12,6 +12,13 @@ interface FilterGroupProps {
   onClearAll: () => void;
   timeFilter: string;
   onTimeFilterChange: (value: string) => void;
+}
+
+const filterButtonSyles = {
+  "received": "bg-[#1FCB92] text-white font-bold",
+  "pending": "bg-[#FFFBEB] text-[#92400E] font-bold",
+  "sent": "bg-black text-white font-bold",
+  "all": "bg-white text-black border border-gray-300 hover:bg-gray-50 font-bold"
 }
 
 export const FilterGroup = ({ 
@@ -28,9 +35,9 @@ export const FilterGroup = ({
         <button
           key={filter.value}
           onClick={() => onFilterChange(filter.value)}
-          className={`px-4 py-2 rounded-lg font-medium transition-colors ${
+          className={`px-4 py-3 rounded-lg font-bold text-base transition-colors ${
             filter.active
-              ? 'bg-black text-white'
+              ? filterButtonSyles[filter.value as keyof typeof filterButtonSyles]
               : 'bg-white text-black border border-gray-300 hover:bg-gray-50'
           }`}
         >
@@ -51,8 +58,7 @@ export const FilterGroup = ({
         onClick={onClearAll}
         className="flex items-center gap-2 text-gray-600 hover:text-gray-800 transition-colors"
       >
-        <Filter className="w-4 h-4" />
-        <X className="w-4 h-4" />
+        <FilterX className="w-4 h-4" />
         <span>Clear All</span>
       </button>
     </div>

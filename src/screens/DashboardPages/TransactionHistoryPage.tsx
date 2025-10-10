@@ -141,7 +141,7 @@ export const TransactionHistoryPage = (): JSX.Element => {
       {filteredTransactions.length === 0 ? (
         searchTerm || activeFilter !== "all" ? (
           // No results found state
-          <div className="bg-white rounded-lg border border-gray-200 p-12 text-center">
+          <div className="bg-white rounded-2xl border border-[#ACACAC] p-12 text-center">
             <h3 className="text-lg font-semibold text-gray-900 mb-2">No transactions found</h3>
             <p className="text-gray-600">Try adjusting your search or filters</p>
           </div>

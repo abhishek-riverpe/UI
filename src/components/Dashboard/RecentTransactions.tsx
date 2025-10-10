@@ -1,6 +1,7 @@
 import { ReactNode } from "react";
 import { Card } from "../ui/card";
 import { Badge } from "../ui/badge";
+import { TransactionItem } from "./TransactionItem";
 
 type TransactionBadge = {
   /** Tailwind classes for outline color set below (e.g., 'pending' | 'received') */
@@ -34,6 +35,7 @@ export  type RecentTransactionsProps = {
   onCtaClick?: () => void;
   transactions: RecentTransaction[];
   emptyState?: EmptyStateConfig;
+  onTransactionClick?: (transactionId: string | number) => void;
 };
 
 const defaultEmptyState: EmptyStateConfig = {
@@ -70,6 +72,7 @@ export const RecentTransactions = ({
   onCtaClick,
   transactions,
   emptyState,
+  onTransactionClick,
 }: RecentTransactionsProps): JSX.Element => {
   const es = { ...defaultEmptyState, ...emptyState };
   const hasTransactions = transactions.length > 0;
@@ -125,45 +128,18 @@ export const RecentTransactions = ({
         </button>
       </header>
 
-      <div className="flex flex-col gap-4">
+      <div className="flex flex-col gap-3">
         {transactions.map((tx) => {
-          const t = toneClasses[tx.badge.tone];
           return (
-            <Card
+            <TransactionItem
               key={tx.id ?? `${tx.name}-${tx.amount}`}
-              className={`p-6 border border-gray-200 rounded-2xl bg-white`}
-            >
-              <div className="flex items-start gap-4">
-                {/* Left: avatar + text */}
-                <img src="/avatar.svg" alt="avatar" className="w-10 h-10" />
-
-                <div className="flex-1 min-w-0">
-                  <p className="[font-family:'Archivo',Helvetica] font-semibold text-base text-black truncate">
-                    {tx.name}
-                  </p>
-                  <p className="[font-family:'Archivo',Helvetica] font-normal text-sm text-gray-600">
-                    {tx.type ?? "Payment"}
-                  </p>
-                </div>
-
-                {/* Right: status pill (top) + amount (bottom) */}
-                <div className="flex flex-col items-end gap-2">
-                  <Badge
-                    variant="outline"
-                    className={`rounded-full px-3 py-1 text-sm [font-family:'Archivo',Helvetica] font-medium flex items-center gap-1 border ${t.badgeBorder} ${t.badgeBg} ${t.text}`}
-                  >
-                    {tx.badge.icon}
-                    {tx.badge.text}
-                  </Badge>
-
-                  <p
-                    className={`[font-family:'Archivo',Helvetica] font-bold text-base md:text-lg text-emerald-600`}
-                  >
-                    {tx.amount}
-                  </p>
-                </div>
-              </div>
-            </Card>
+              id={typeof tx.id === 'number' ? tx.id : parseInt(String(tx.id || 0))}
+              name={tx.name}
+              type={tx.type ?? "Payment"}
+              status={tx.badge.tone as "pending" | "received"}
+              amount={tx.amount}
+              onClick={() => tx.id && onTransactionClick?.(tx.id)}
+            />
           );
         })}
       </div>

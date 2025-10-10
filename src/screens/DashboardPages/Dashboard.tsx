@@ -5,90 +5,95 @@ import LiveCalculator from "../../components/Dashboard/LiveCalculator";
 import { Download, Share2, Handshake } from "lucide-react";
 import QuickActions, { QuickAction } from "@/components/Dashboard/QuickActions";
 import BankAccount from "@/components/Dashboard/BankAccount";
+import { useNavigate } from "react-router-dom";
+import { TransactionDetailsModal } from "@/components/Dashboard/TransactionDetailsModal";
+import { useState } from "react";
+
+interface Transaction {
+  id: number;
+  name: string;
+  type: string;
+  status: "pending" | "received";
+  amount: string;
+  date: string;
+}
 
 export const Dashboard = (): JSX.Element => {
-const transactions: RecentTransaction[] = [
+  const navigate = useNavigate();
+  const [selectedTransaction, setSelectedTransaction] = useState<Transaction | null>(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const transactionsData: Transaction[] = [
     {
       id: 1,
-      icon: (
-        <Avatar className="bg-blue-50 text-blue-600">
-          <span className="text-sm font-semibold">SJ</span>
-        </Avatar>
-      ),
       name: "Steve John",
       type: "Payment",
-      badge: {
-        tone: "pending",
-        icon: <Clock size={14} />,
-        text: "Pending",
-      },
+      status: "pending",
       amount: "$2,500.00",
+      date: "4 October 2025"
     },
     {
       id: 2,
-      icon: (
-        <Avatar className="bg-blue-50 text-blue-600">
-          <span className="text-sm font-semibold">SJ</span>
-        </Avatar>
-      ),
       name: "Steve John",
       type: "Payment",
-      badge: {
-        tone: "pending",
-        icon: <Clock size={14} />,
-        text: "Pending",
-      },
+      status: "pending",
       amount: "$2,500.00",
+      date: "3 October 2025"
     },
     {
       id: 3,
-      icon: (
-        <Avatar className="bg-blue-50 text-blue-600">
-          <span className="text-sm font-semibold">SJ</span>
-        </Avatar>
-      ),
       name: "Steve John",
       type: "Payment",
-      badge: {
-        tone: "received",
-        icon: <CheckCircle2 size={14} />,
-        text: "Received",
-      },
+      status: "received",
       amount: "$2,500.00",
+      date: "2 October 2025"
     },
     {
       id: 4,
-      icon: (
-        <Avatar className="bg-blue-50 text-blue-600">
-          <span className="text-sm font-semibold">SJ</span>
-        </Avatar>
-      ),
       name: "Steve John",
       type: "Payment",
-      badge: {
-        tone: "received",
-        icon: <CheckCircle2 size={14} />,
-        text: "Received",
-      },
+      status: "received",
       amount: "$2,500.00",
+      date: "1 October 2025"
     },
     {
       id: 5,
-      icon: (
-        <Avatar className="bg-blue-50 text-blue-600">
-          <span className="text-sm font-semibold">SJ</span>
-        </Avatar>
-      ),
       name: "Steve John",
       type: "Payment",
-      badge: {
-        tone: "received",
-        icon: <CheckCircle2 size={14} />,
-        text: "Received",
-      },
+      status: "received",
       amount: "$2,500.00",
+      date: "30 September 2025"
     },
   ];
+
+  const transactions: RecentTransaction[] = transactionsData.map((tx) => ({
+    id: tx.id,
+    icon: (
+      <Avatar className="bg-blue-50 text-blue-600">
+        <span className="text-sm font-semibold">SJ</span>
+      </Avatar>
+    ),
+    name: tx.name,
+    type: tx.type,
+    badge: {
+      tone: tx.status,
+      icon: tx.status === "pending" ? <Clock size={14} /> : <CheckCircle2 size={14} />,
+      text: tx.status === "pending" ? "Pending" : "Received",
+    },
+    amount: tx.amount,
+  }));
+
+  const handleTransactionClick = (transactionId: string | number) => {
+    const transaction = transactionsData.find(t => t.id === transactionId);
+    if (transaction) {
+      setSelectedTransaction(transaction);
+      setIsModalOpen(true);
+    }
+  };
+
+  const handleCloseModal = () => {
+    setIsModalOpen(false);
+    setSelectedTransaction(null);
+  };
   
   const activeCards: QuickAction[] = [
     {
@@ -135,14 +140,22 @@ const transactions: RecentTransaction[] = [
         <RecentTransactions
           title="Transaction history"
           ctaLabel="View all"
-          onCtaClick={() => alert("View all clicked")}
+          onCtaClick={() => navigate("/dashboard/transactions")}
           transactions={transactions}
+          onTransactionClick={handleTransactionClick}
         />
       </div>
 
       <div className="mt-8">
         <LiveCalculator />
       </div>
+
+      {/* Transaction Details Modal */}
+      <TransactionDetailsModal
+        isOpen={isModalOpen}
+        onClose={handleCloseModal}
+        transaction={selectedTransaction}
+      />
     </div>
   );
 };
