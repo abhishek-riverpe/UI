@@ -7,6 +7,8 @@ import QuickActions, { QuickAction } from "@/components/Dashboard/QuickActions";
 import BankAccount from "@/components/Dashboard/BankAccount";
 import { useNavigate } from "react-router-dom";
 import { TransactionDetailsModal } from "@/components/Dashboard/TransactionDetailsModal";
+import { ShareBankingDetailsModal } from "@/components/Dashboard/ShareBankingDetailsModal";
+import { AccountDetails } from "@/components/Dashboard/AccountDetails";
 import { useState } from "react";
 
 interface Transaction {
@@ -22,6 +24,8 @@ export const Dashboard = (): JSX.Element => {
   const navigate = useNavigate();
   const [selectedTransaction, setSelectedTransaction] = useState<Transaction | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isShareBankingModalOpen, setIsShareBankingModalOpen] = useState(false);
+  const [showAccountDetails, setShowAccountDetails] = useState(false);
   const transactionsData: Transaction[] = [
     {
       id: 1,
@@ -94,6 +98,16 @@ export const Dashboard = (): JSX.Element => {
     setIsModalOpen(false);
     setSelectedTransaction(null);
   };
+
+  const handleShareBankingDetails = (email: string) => {
+    // Implement share banking details logic here
+    console.log("Sharing banking details with:", email);
+    // You could add success/error handling here
+  };
+
+  const handleShowBankDetails = () => {
+    setShowAccountDetails(true);
+  };
   
   const activeCards: QuickAction[] = [
     {
@@ -111,7 +125,7 @@ export const Dashboard = (): JSX.Element => {
       description:
         "Generate and copy your US account and routing numbers to invoice clients securely.",
       icon: <Share2 className="w-8 h-8" />,
-      onClick: () => alert("Share US bank details clicked"),
+      onClick: () => setIsShareBankingModalOpen(true),
     },
     {
       id: "refer",
@@ -123,13 +137,31 @@ export const Dashboard = (): JSX.Element => {
     },
   ];
 
+  if (showAccountDetails) {
+    return (
+      <div className="w-full">
+        <AccountDetails 
+          onShareBankingDetails={() => setIsShareBankingModalOpen(true)}
+          onBack={() => setShowAccountDetails(false)}
+        />
+        
+        {/* Share Banking Details Modal */}
+        <ShareBankingDetailsModal
+          isOpen={isShareBankingModalOpen}
+          onClose={() => setIsShareBankingModalOpen(false)}
+          onShare={handleShareBankingDetails}
+        />
+      </div>
+    );
+  }
+
   return (
     <div className="w-full">
       <BankAccount 
-        verificationStatus="not_verified" 
-        accountCreated={false} 
+        verificationStatus="verified" 
+        accountCreated={true} 
         accountBalance={10000}
-        onShowBankDetails={() => alert("Show bank details")} 
+        onShowBankDetails={handleShowBankDetails} 
       />
 
       <div className="mt-8">
@@ -155,6 +187,13 @@ export const Dashboard = (): JSX.Element => {
         isOpen={isModalOpen}
         onClose={handleCloseModal}
         transaction={selectedTransaction}
+      />
+
+      {/* Share Banking Details Modal */}
+      <ShareBankingDetailsModal
+        isOpen={isShareBankingModalOpen}
+        onClose={() => setIsShareBankingModalOpen(false)}
+        onShare={handleShareBankingDetails}
       />
     </div>
   );

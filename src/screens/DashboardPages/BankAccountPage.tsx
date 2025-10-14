@@ -3,8 +3,8 @@ import BankAccount from "@/components/Dashboard/BankAccount";
 
 export const BankAccountPage = (): JSX.Element => {
   // This would typically come from your app state/API
-  const [verificationStatus] = useState<"not_verified" | "pending" | "rejected" | "verified">("not_verified");
-  const [accountCreated] = useState(false);
+  const [verificationStatus] = useState<"not_verified" | "pending" | "rejected" | "verified">("verified");
+  const [accountCreated] = useState(true);
   const [accountBalance] = useState(0);
 
   const handleStartVerification = () => {
