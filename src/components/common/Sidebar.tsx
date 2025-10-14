@@ -114,7 +114,7 @@ const Sidebar: React.FC = () => {
   ];
 
   return (
-    <aside className="w-[264px]  flex flex-col">
+    <aside className="w-[264px] h-full flex flex-col overflow-y-auto">
       {/* Nav */}
       <nav className="px-6 pb-6 flex flex-col gap-[15px]">
         {items.map((it, idx) => {
