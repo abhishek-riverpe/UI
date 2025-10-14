@@ -4,17 +4,28 @@ import { Button } from "../../../components/ui/button";
 
 export const Signup = (): JSX.Element => {
   
-  const [input, setInput] = useState("");
+  const [email, setEmail] = useState("");
+  const [phoneNumber, setPhoneNumber] = useState("");
   const [isValid, setIsValid] = useState(false);
   const navigate = useNavigate();
   // Simple regex for email and phone validation
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
   const phoneRegex = /^\d{10,15}$/;
 
-  const handleChange = (e:any) => {
+  const handleEmailChange = (e: any) => {
     const value = e.target.value;
-    setInput(value);
-    setIsValid(emailRegex.test(value) || phoneRegex.test(value));
+    setEmail(value);
+    updateValidation(value, phoneNumber);
+  };
+
+  const handlePhoneChange = (e: any) => {
+    const value = e.target.value;
+    setPhoneNumber(value);
+    updateValidation(email, value);
+  };
+
+  const updateValidation = (emailValue: string, phoneValue: string) => {
+    setIsValid(emailRegex.test(emailValue) && phoneRegex.test(phoneValue));
   };
 
   return (
@@ -68,13 +79,31 @@ export const Signup = (): JSX.Element => {
                   htmlFor="email"
                   className="[font-family:'Archivo',Helvetica] font-normal text-base text-black tracking-[0] leading-[normal]"
                 >
-                  Enter your email address or phone number
+                  Enter your email address
                 </label>
                 <input
                   id="email"
-                  value={input}
-                  onChange={(e)=>handleChange(e)}
-                  type="text"
+                  value={email}
+                  onChange={handleEmailChange}
+                  type="email"
+                  placeholder="example@email.com"
+                  className="w-full h-[46px] bg-white border border-gray-300 rounded-lg px-4 [font-family:'Archivo',Helvetica] font-normal text-base text-black focus:outline-none focus:border-[#2e5cef] focus:ring-1 focus:ring-[#2e5cef]"
+                />
+              </div>
+
+              <div className="flex flex-col gap-2">
+                <label
+                  htmlFor="phone"
+                  className="[font-family:'Archivo',Helvetica] font-normal text-base text-black tracking-[0] leading-[normal]"
+                >
+                  Enter your phone number
+                </label>
+                <input
+                  id="phone"
+                  value={phoneNumber}
+                  onChange={handlePhoneChange}
+                  type="tel"
+                  placeholder="1234567890"
                   className="w-full h-[46px] bg-white border border-gray-300 rounded-lg px-4 [font-family:'Archivo',Helvetica] font-normal text-base text-black focus:outline-none focus:border-[#2e5cef] focus:ring-1 focus:ring-[#2e5cef]"
                 />
               </div>
@@ -102,9 +131,9 @@ export const Signup = (): JSX.Element => {
 
               <p className="text-center [font-family:'Archivo',Helvetica] font-normal text-base text-black tracking-[0] leading-[normal]">
                 Already have an account?{" "}
-                <a href="#" className="font-semibold underline">
+                <Link to="/signin" className="font-semibold underline">
                   Sign in
-                </a>
+                </Link>
                 !
               </p>
             </div>

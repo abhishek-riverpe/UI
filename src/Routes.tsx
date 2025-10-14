@@ -1,4 +1,5 @@
 import { Signup } from "./screens/onBoardingPages/signup/SignupPage";
+import { SigninPage } from "./screens/onBoardingPages/signin/SigninPage";
 import { LandingPage } from "./screens/LandingPages";
 import { Routes, Route } from "react-router-dom";
 import { AccountType } from "./screens/onBoardingPages/AccountTypePage";
@@ -16,6 +17,7 @@ import { TransactionHistoryPage } from "./screens/DashboardPages/TransactionHist
 import { ReferralsPage } from "./screens/DashboardPages/ReferralsPage";
 import { KYCPage } from "./screens/DashboardPages/KYCPage";
 import { SupportPage } from "./screens/DashboardPages/SupportPage";
+import { ProfileSettingsPage } from "./screens/DashboardPages/ProfileSettingsPage";
 
 export default function App() {
   return (
@@ -23,6 +25,7 @@ export default function App() {
       <Route path="/home/:type" element={<LandingPage />} />
       <Route path="/" element={<LandingPage />} />
       <Route path="/signup" element={<Signup />} />
+      <Route path="/signin" element={<SigninPage />} />
       <Route path="/account-type" element={<AccountType />} />
       <Route path="/verify-identityStep-1" element={<VerifyIdentityStep1/>} />
       <Route path="/verify-identityStep-2" element={<VerifyIdentityStep2/>} />
@@ -40,6 +43,7 @@ export default function App() {
         <Route path="referrals" element={<ReferralsPage />} />
         <Route path="kyc" element={<KYCPage />} />
         <Route path="support" element={<SupportPage />} />
+        <Route path="profile-settings" element={<ProfileSettingsPage />} />
       </Route>
       
     </Routes>
