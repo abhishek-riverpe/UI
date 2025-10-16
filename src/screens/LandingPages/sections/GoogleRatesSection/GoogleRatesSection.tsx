@@ -1,5 +1,4 @@
 import { ChevronUpIcon, ZapIcon } from "lucide-react";
-import React from "react";
 import { Badge } from "../../../../components/ui/badge";
 import { Button } from "../../../../components/ui/button";
 import { Card, CardContent } from "../../../../components/ui/card";
@@ -20,17 +19,17 @@ export const GoogleRatesSection = (): JSX.Element => {
   ];
 
   return (
-    <section className="my-12 relative w-full bg-white">
-      <div className="max-w-[1229px] mx-auto">
-        <div className="flex items-center gap-[150px] w-full">
+    <section className="py-8 lg:py-12 relative w-full bg-white">
+      <div className="max-w-[1229px] mx-auto px-4 lg:px-0">
+        <div className="flex flex-col lg:flex-row items-center gap-8 lg:gap-18 w-full">
 
-         <div className="flex flex-col w-[519px] items-start gap-20">
-             <div className="flex flex-col items-start gap-3">
-               <div className="font-light text-black text-[20px] leading-[1.088em]">
+         <div className="flex flex-col w-full lg:w-[519px] items-start gap-8 lg:gap-20">
+             <div className="flex flex-col items-start gap-3 w-full">
+               <div className="font-light text-black text-sm lg:text-[20px] leading-[1.088em] text-left">
                  powered by <span className="text-[#635BFF] font-bold">stripe</span>
                </div>
                <p
-                 className="[font-family:'Font family/headings',Helvetica] font-semibold text-[#1f1f1f] text-[52px] tracking-[0] leading-[100%] align-middle"
+                 className="[font-family:'Font family/headings',Helvetica] font-semibold text-[#1f1f1f] text-2xl lg:text-[52px] tracking-[0] leading-[100%] text-left"
                  style={{ fontStyle: "normal", fontWeight: 600 }}
                >
                  Instant transfer with Google exchange rate
@@ -39,6 +38,7 @@ export const GoogleRatesSection = (): JSX.Element => {
 
             <div className="flex flex-col items-start gap-[5px] w-full">
               <div
+                className="text-5xl lg:text-[72px]"
                 style={{
                   background: "linear-gradient(135deg, rgba(0, 90, 238, 0.75) 0%, rgba(34, 226, 162, 0.75) 100%)",
                   WebkitBackgroundClip: "text",
@@ -46,7 +46,6 @@ export const GoogleRatesSection = (): JSX.Element => {
                   fontFamily: "'Font family/headings', Helvetica, Arial, sans-serif",
                   fontWeight: 600,
                   fontStyle: "normal",
-                  fontSize: "72px",
                   lineHeight: "100%",
                   letterSpacing: "0px",
                   verticalAlign: "middle",
@@ -55,13 +54,13 @@ export const GoogleRatesSection = (): JSX.Element => {
                 0.25%
               </div>
 
-              <div className="inline-flex flex-col items-left gap-1">
-                <div className="[font-family:'Archivo',Helvetica] font-normal text-[#1f1f1f] text-xl text-center tracking-[0] leading-[30px]">
+              <div className="inline-flex flex-col items-start gap-1">
+                <div className="[font-family:'Archivo',Helvetica] font-normal text-[#1f1f1f] text-lg lg:text-xl text-left tracking-[0] leading-[30px]">
                   Fee per transaction
                 </div>
 
                 <div
-                  className="[font-family:'Font family/body',Helvetica] font-light text-[#1f1f1f] text-[14px] tracking-[0] leading-[21px] align-middle"
+                  className="[font-family:'Font family/body',Helvetica] font-light text-[#1f1f1f] text-[14px] tracking-[0] leading-[21px] text-left"
                   style={{
                     fontFamily: "'Font family/body', Helvetica, Arial, sans-serif",
                     fontWeight: 300,
@@ -69,7 +68,6 @@ export const GoogleRatesSection = (): JSX.Element => {
                     fontSize: "14px",
                     lineHeight: "21px",
                     letterSpacing: "0px",
-                    verticalAlign: "middle",
                   }}
                 >
                   (All inclusive)
@@ -77,8 +75,8 @@ export const GoogleRatesSection = (): JSX.Element => {
               </div>
             </div>
 
-            <div className="flex flex-col w-[405px] items-start gap-4">
-              <Button className="w-[253px] h-auto bg-[#005aee] hover:bg-[#0047bb] px-6 py-4 rounded-lg">
+            <div className="flex flex-col w-full lg:w-[405px] items-start gap-4">
+              <Button className="w-full lg:w-[253px] h-auto bg-[#005aee] hover:bg-[#0047bb] px-6 py-4 rounded-lg">
                 <span className="[font-family:'Archivo',Helvetica] font-semibold text-white text-base text-center tracking-[0] leading-[normal] whitespace-nowrap">
                   Get Started
                 </span>
@@ -94,7 +92,7 @@ export const GoogleRatesSection = (): JSX.Element => {
                   letterSpacing: "0px",
                   color: "#575757",
                 }}
-                className="tracking-[0]"
+                className="tracking-[0] text-left"
               >
                 Custom fee for transactions above USD 50,000.&nbsp;&nbsp;
                 <span
@@ -115,22 +113,22 @@ export const GoogleRatesSection = (): JSX.Element => {
           </div>
 
 
-          <div className="w-[540px] h-[640px] bg-[#dee7f6] rounded-3xl overflow-hidden p-8">
+          <div className="w-full lg:w-[540px] max-w-[540px] h-auto lg:h-[640px] bg-[#dee7f6] rounded-3xl overflow-hidden p-4 lg:p-8">
             <Card className="w-full h-full bg-white rounded-2xl overflow-hidden border-0 shadow-none">
-              <CardContent className="flex flex-col items-center justify-center gap-8 p-[21px] pt-[27px] h-full">
+              <CardContent className="flex flex-col items-center justify-center gap-4 lg:gap-8 p-4 lg:p-[21px] lg:pt-[27px] h-full">
                 <div className="inline-flex flex-col items-center justify-center gap-1">
                   <Badge
                     variant="outline"
-                    className="h-6 gap-1 px-6 bg-white rounded-3xl border-0"
+                    className="h-6 gap-1 px-3 lg:px-6 bg-white rounded-3xl border-0"
                   >
                     <div className="w-2 h-2 bg-[#00c950] rounded-full opacity-[0.94]" />
-                    <span className="[font-family:'Archivo',Helvetica] font-medium text-[#00a63d] text-sm tracking-[0] leading-5">
+                    <span className="[font-family:'Archivo',Helvetica] font-medium text-[#00a63d] text-xs lg:text-sm tracking-[0] leading-5">
                       Live FX rate
                     </span>
                   </Badge>
 
                   <div className="flex items-center justify-center gap-2.5 px-3 py-1.5 w-full bg-[#efefef] rounded-3xl">
-                    <div className="[font-family:'Archivo',Helvetica] font-semibold text-[#101727] text-base text-center tracking-[0] leading-7 whitespace-nowrap">
+                    <div className="[font-family:'Archivo',Helvetica] font-semibold text-[#101727] text-sm lg:text-base text-center tracking-[0] leading-7">
                       1 USD = 88.6654 INR
                     </div>
                   </div>
@@ -143,7 +141,7 @@ export const GoogleRatesSection = (): JSX.Element => {
 
                   <div className="flex flex-col items-start gap-2.5 px-[11px] py-3 w-full rounded-xl overflow-hidden border border-solid border-[#575757]">
                     <div className="flex items-center justify-between w-full">
-                      <div className="[font-family:'Neue_Haas_Grotesk_Display_Pro-Bold',Helvetica] font-bold text-[#222222] text-xl text-center tracking-[0] leading-[normal] whitespace-nowrap">
+                      <div className="[font-family:'Neue_Haas_Grotesk_Display_Pro-Bold',Helvetica] font-bold text-[#222222] text-lg lg:text-xl text-center tracking-[0] leading-[normal] whitespace-nowrap">
                         $ 7,000
                       </div>
 
@@ -169,7 +167,7 @@ export const GoogleRatesSection = (): JSX.Element => {
 
                   <div className="flex flex-col items-start gap-2.5 px-[11px] py-3 w-full rounded-xl overflow-hidden border border-solid border-[#575757]">
                     <div className="flex items-center justify-between w-full">
-                      <div className="[font-family:'Neue_Haas_Grotesk_Display_Pro-Bold',Helvetica] font-bold text-[#222222] text-xl text-center tracking-[0] leading-[normal] whitespace-nowrap">
+                      <div className="[font-family:'Neue_Haas_Grotesk_Display_Pro-Bold',Helvetica] font-bold text-[#222222] text-lg lg:text-xl text-center tracking-[0] leading-[normal] whitespace-nowrap">
                         ₹ 88,236.6
                       </div>
 
@@ -191,9 +189,9 @@ export const GoogleRatesSection = (): JSX.Element => {
                     </div>
                   </div>
 
-                  <div className="flex items-center justify-between w-full">
+                  <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between w-full gap-2 lg:gap-0">
                     <div className="inline-flex items-center gap-1">
-                      <div className="[font-family:'Archivo',Helvetica] font-bold text-[#137c59] text-xs tracking-[0] leading-4 whitespace-nowrap">
+                      <div className="[font-family:'Archivo',Helvetica] font-bold text-[#137c59] text-xs tracking-[0] leading-4">
                         Get ₹4,367.49 more with
                       </div>
 
@@ -206,7 +204,7 @@ export const GoogleRatesSection = (): JSX.Element => {
 
                     <Badge
                       variant="secondary"
-                      className="h-[26px] gap-1 px-3 py-1 bg-[#ccf3e6] rounded-full overflow-hidden border-0 hover:bg-[#ccf3e6]"
+                      className="h-[26px] gap-1 px-3 py-1 bg-[#ccf3e6] rounded-full overflow-hidden border-0 hover:bg-[#ccf3e6] self-end lg:self-auto"
                     >
                       <ZapIcon className="w-4 h-4 fill-[#137c59] text-[#137c59]" />
                       <span className="[font-family:'Archivo',Helvetica] font-medium text-[#137c59] text-xs tracking-[0] leading-4 whitespace-nowrap">
@@ -218,11 +216,11 @@ export const GoogleRatesSection = (): JSX.Element => {
 
                 <div className="w-full h-px bg-[#acacac]" />
 
-                <div className="flex items-center justify-between w-full">
+                <div className="flex items-center justify-between gap-4 lg:gap-0 w-full">
                   {comparisonData.map((item, index) => (
                     <div
                       key={index}
-                      className="flex flex-col w-[209px] h-[95px] items-start gap-2.5 px-[13px] py-4 bg-[#ececec] rounded-xl overflow-hidden"
+                      className="flex flex-col w-full lg:min-w-[160px] md:mx-2 h-auto lg:h-[95px] items-start gap-2.5 px-4 py-4 bg-[#ececec] rounded-xl overflow-hidden"
                     >
                       <div className="flex flex-col items-start gap-2 flex-1 w-full">
                         {item.icon ? (
@@ -244,11 +242,11 @@ export const GoogleRatesSection = (): JSX.Element => {
                           />
                         )}
 
-                        <div className="[font-family:'Neue_Haas_Grotesk_Display_Pro-Roman',Helvetica] font-normal text-[#222222] text-base tracking-[0] leading-[normal]">
+                        <div className="[font-family:'Neue_Haas_Grotesk_Display_Pro-Roman',Helvetica] text-xs md:text-base font-normal text-[#222222]  tracking-[0] leading-[normal]">
                           {item.amount}
                         </div>
 
-                        <div className="flex items-start gap-1 w-full">
+                        <div className="text-xs flex items-start gap-1 w-full">
                           <ChevronUpIcon className="w-3 h-3 text-colorspink" />
                           <div className="[font-family:'Archivo',Helvetica] font-normal text-colorspink text-[10px] tracking-[0] leading-[normal] whitespace-nowrap">
                             {item.difference}
@@ -259,7 +257,7 @@ export const GoogleRatesSection = (): JSX.Element => {
                   ))}
                 </div>
 
-                <div className="[font-family:'Archivo',Helvetica] font-normal text-[#005aee] text-sm text-center tracking-[0] leading-5 whitespace-nowrap">
+                <div className="[font-family:'Archivo',Helvetica] font-normal text-[#005aee] text-xs lg:text-sm text-center tracking-[0] leading-5">
                   Save ₹52,410 annually with Riverpe compared to banks
                 </div>
               </CardContent>
