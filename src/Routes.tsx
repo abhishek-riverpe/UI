@@ -10,6 +10,7 @@ import SelectIDType from "./screens/onBoardingPages/VerificationStep-3";
 import QrScanner from "./screens/onBoardingPages/QrScanner";
 import VerificationSuccess from "./screens/onBoardingPages/VerificationSuccess";
 import { DashboardLayout } from "./components/layout/DashboardLayout";
+import ProtectedRoute from "./components/ProtectedRoute";
 import { Dashboard } from "./screens/DashboardPages/Dashboard";
 import { BankAccountPage } from "./screens/DashboardPages/BankAccountPage";
 import { WithdrawFundsPage } from "./screens/DashboardPages/WithdrawFundsPage";
@@ -34,8 +35,15 @@ export default function App() {
       <Route path="/verify-identityStep-5" element={<QrScanner/>} />
       <Route path="/VerificationSuccess" element={<VerificationSuccess/>} />
       
-      {/* Dashboard Routes with Layout */}
-      <Route path="/dashboard" element={<DashboardLayout />}>
+      {/* Dashboard Routes with Layout - protected */}
+      <Route
+        path="/dashboard"
+        element={
+          <ProtectedRoute>
+            <DashboardLayout />
+          </ProtectedRoute>
+        }
+      >
         <Route index element={<Dashboard />} />
         <Route path="bank" element={<BankAccountPage />} />
         <Route path="withdraw" element={<WithdrawFundsPage />} />

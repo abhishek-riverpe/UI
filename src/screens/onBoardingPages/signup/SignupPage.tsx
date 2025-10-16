@@ -1,31 +1,50 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { Button } from "../../../components/ui/button";
+import { api } from "../../../lib/api";
+import { useAppContext } from "../../../context/AppContext";
 
 export const Signup = (): JSX.Element => {
-  
-  const [email, setEmail] = useState("");
-  const [phoneNumber, setPhoneNumber] = useState("");
-  const [isValid, setIsValid] = useState(false);
   const navigate = useNavigate();
-  // Simple regex for email and phone validation
+  const { setAuth } = useAppContext();
+  const [firstName, setFirstName] = useState("");
+  const [lastName, setLastName] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-  const phoneRegex = /^\d{10,15}$/;
+  const canSubmit =
+    firstName.trim().length > 0 &&
+    lastName.trim().length > 0 &&
+    emailRegex.test(email) &&
+    password.length >= 6;
 
-  const handleEmailChange = (e: any) => {
-    const value = e.target.value;
-    setEmail(value);
-    updateValidation(value, phoneNumber);
-  };
-
-  const handlePhoneChange = (e: any) => {
-    const value = e.target.value;
-    setPhoneNumber(value);
-    updateValidation(email, value);
-  };
-
-  const updateValidation = (emailValue: string, phoneValue: string) => {
-    setIsValid(emailRegex.test(emailValue) && phoneRegex.test(phoneValue));
+  const handleSubmit = async () => {
+    if (!canSubmit || loading) return;
+    setError(null);
+    setLoading(true);
+    try {
+      const res = await api.post("/api/v1/user/signup", {
+        username: email,
+        password,
+        firstName,
+        lastName,
+      });
+      const token = res.data?.access_token as string;
+      if (token) {
+        setAuth(token, { username: email, firstName, lastName });
+        navigate("/dashboard");
+      } else {
+        setError("Unexpected response from server.");
+      }
+    } catch (e: any) {
+      const msg = e?.response?.data?.detail || "Failed to sign up";
+      setError(msg);
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -75,16 +94,35 @@ export const Signup = (): JSX.Element => {
 
             <div className="flex flex-col gap-6">
               <div className="flex flex-col gap-2">
-                <label
-                  htmlFor="email"
-                  className="[font-family:'Archivo',Helvetica] font-normal text-base text-black tracking-[0] leading-[normal]"
-                >
-                  Enter your email address
-                </label>
+                <label htmlFor="firstName" className="[font-family:'Archivo',Helvetica] font-normal text-base text-black tracking-[0] leading-[normal]">First name</label>
+                <input
+                  id="firstName"
+                  value={firstName}
+                  onChange={(e) => setFirstName(e.target.value)}
+                  type="text"
+                  placeholder="John"
+                  className="w-full h-[46px] bg-white border border-gray-300 rounded-lg px-4 [font-family:'Archivo',Helvetica] font-normal text-base text-black focus:outline-none focus:border-[#2e5cef] focus:ring-1 focus:ring-[#2e5cef]"
+                />
+              </div>
+
+              <div className="flex flex-col gap-2">
+                <label htmlFor="lastName" className="[font-family:'Archivo',Helvetica] font-normal text-base text-black tracking-[0] leading-[normal]">Last name</label>
+                <input
+                  id="lastName"
+                  value={lastName}
+                  onChange={(e) => setLastName(e.target.value)}
+                  type="text"
+                  placeholder="Doe"
+                  className="w-full h-[46px] bg-white border border-gray-300 rounded-lg px-4 [font-family:'Archivo',Helvetica] font-normal text-base text-black focus:outline-none focus:border-[#2e5cef] focus:ring-1 focus:ring-[#2e5cef]"
+                />
+              </div>
+
+              <div className="flex flex-col gap-2">
+                <label htmlFor="email" className="[font-family:'Archivo',Helvetica] font-normal text-base text-black tracking-[0] leading-[normal]">Email</label>
                 <input
                   id="email"
                   value={email}
-                  onChange={handleEmailChange}
+                  onChange={(e) => setEmail(e.target.value)}
                   type="email"
                   placeholder="example@email.com"
                   className="w-full h-[46px] bg-white border border-gray-300 rounded-lg px-4 [font-family:'Archivo',Helvetica] font-normal text-base text-black focus:outline-none focus:border-[#2e5cef] focus:ring-1 focus:ring-[#2e5cef]"
@@ -92,27 +130,27 @@ export const Signup = (): JSX.Element => {
               </div>
 
               <div className="flex flex-col gap-2">
-                <label
-                  htmlFor="phone"
-                  className="[font-family:'Archivo',Helvetica] font-normal text-base text-black tracking-[0] leading-[normal]"
-                >
-                  Enter your phone number
-                </label>
+                <label htmlFor="password" className="[font-family:'Archivo',Helvetica] font-normal text-base text-black tracking-[0] leading-[normal]">Password</label>
                 <input
-                  id="phone"
-                  value={phoneNumber}
-                  onChange={handlePhoneChange}
-                  type="tel"
-                  placeholder="1234567890"
+                  id="password"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  type="password"
+                  placeholder="At least 6 characters"
                   className="w-full h-[46px] bg-white border border-gray-300 rounded-lg px-4 [font-family:'Archivo',Helvetica] font-normal text-base text-black focus:outline-none focus:border-[#2e5cef] focus:ring-1 focus:ring-[#2e5cef]"
                 />
               </div>
 
+              {error && (
+                <div className="text-red-600 [font-family:'Archivo',Helvetica] text-sm">{error}</div>
+              )}
+
               <Button
-               disabled={!isValid}
-               onClick={()=>navigate("/account-type")}
-                className="w-full h-[46px] bg-[#2e5cef] hover:bg-[#2449c8] text-white rounded-lg [font-family:'Archivo',Helvetica] font-semibold text-base">
-                Sign up
+                disabled={!canSubmit || loading}
+                onClick={handleSubmit}
+                className="w-full h-[46px] bg-[#2e5cef] hover:bg-[#2449c8] text-white rounded-lg [font-family:'Archivo',Helvetica] font-semibold text-base disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                {loading ? "Creating account..." : "Sign up"}
               </Button>
             </div>
 
