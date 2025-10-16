@@ -3,6 +3,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { Button } from "../../../components/ui/button";
 import { api } from "../../../lib/api";
 import { useAppContext } from "../../../context/AppContext";
+import { BACKEND_URL } from "../../../lib/urls";
 
 export const Signup = (): JSX.Element => {
   const navigate = useNavigate();
@@ -73,6 +74,9 @@ export const Signup = (): JSX.Element => {
 
               <Button
                 variant="outline"
+                onClick={() => {
+                  window.location.href = `${BACKEND_URL}/auth/google`;
+                }}
                 className="w-full h-[36px] bg-white border border-gray-300 rounded-lg hover:bg-gray-50 flex items-center justify-center gap-3"
               >
                 <svg width="28" height="28" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">

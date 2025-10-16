@@ -9,7 +9,7 @@ type ProfileProps = {
 
 export default function Profile({ name, imageSrc, onClick }: ProfileProps) {
   const handleClick = () => {
-    onClick?.() || alert("Clicked on profile");
+    onClick?.();
   };
 
   return (
