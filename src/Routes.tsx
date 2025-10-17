@@ -10,6 +10,8 @@ import SelectIDType from "./screens/onBoardingPages/VerificationStep-3";
 import QrScanner from "./screens/onBoardingPages/QrScanner";
 import VerificationSuccess from "./screens/onBoardingPages/VerificationSuccess";
 import { DashboardLayout } from "./components/layout/DashboardLayout";
+import ProtectedRoute from "./components/ProtectedRoute";
+import GuestRoute from "./components/GuestRoute";
 import { Dashboard } from "./screens/DashboardPages/Dashboard";
 import { BankAccountPage } from "./screens/DashboardPages/BankAccountPage";
 import { WithdrawFundsPage } from "./screens/DashboardPages/WithdrawFundsPage";
@@ -18,15 +20,17 @@ import { ReferralsPage } from "./screens/DashboardPages/ReferralsPage";
 import { KYCPage } from "./screens/DashboardPages/KYCPage";
 import { SupportPage } from "./screens/DashboardPages/SupportPage";
 import { ProfileSettingsPage } from "./screens/DashboardPages/ProfileSettingsPage";
+import OAuthCallback from "./screens/OAuthCallback";
 
 export default function App() {
   return (
     <Routes>
       <Route path="/home/:type" element={<LandingPage />} />
       <Route path="/" element={<LandingPage />} />
-      <Route path="/signup" element={<Signup />} />
-      <Route path="/signin" element={<SigninPage />} />
+      <Route path="/signup" element={<GuestRoute><Signup /></GuestRoute>} />
+      <Route path="/signin" element={<GuestRoute><SigninPage /></GuestRoute>} />
       <Route path="/account-type" element={<AccountType />} />
+      <Route path="/oauth/callback" element={<OAuthCallback />} />
       <Route path="/verify-identityStep-1" element={<VerifyIdentityStep1/>} />
       <Route path="/verify-identityStep-2" element={<VerifyIdentityStep2/>} />
       <Route path="/verify-identityStep-3" element={<SelectIDType/>} />
@@ -34,8 +38,15 @@ export default function App() {
       <Route path="/verify-identityStep-5" element={<QrScanner/>} />
       <Route path="/VerificationSuccess" element={<VerificationSuccess/>} />
       
-      {/* Dashboard Routes with Layout */}
-      <Route path="/dashboard" element={<DashboardLayout />}>
+      {/* Dashboard Routes with Layout - protected */}
+      <Route
+        path="/dashboard"
+        element={
+          <ProtectedRoute>
+            <DashboardLayout />
+          </ProtectedRoute>
+        }
+      >
         <Route index element={<Dashboard />} />
         <Route path="bank" element={<BankAccountPage />} />
         <Route path="withdraw" element={<WithdrawFundsPage />} />

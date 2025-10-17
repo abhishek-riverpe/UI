@@ -106,6 +106,7 @@ export const LandingPage = (): JSX.Element => {
         {/* Desktop Action Buttons */}
         <div className="hidden lg:inline-flex items-center gap-4 relative">
           <Button
+            onClick={() => navigate('/signin')}
             variant="outline"
             className="h-auto inline-flex items-center justify-center gap-2.5 px-6 py-4 bg-white rounded-lg border border-solid border-[#222222] hover:bg-gray-50"
           >
