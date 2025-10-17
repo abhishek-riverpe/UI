@@ -1,6 +1,4 @@
 // components/Profile.tsx
-import { ChevronRight } from "lucide-react";
-
 type ProfileProps = {
   name: string;
   imageSrc: string;
@@ -23,10 +21,6 @@ export default function Profile({ name, imageSrc, onClick }: ProfileProps) {
         alt={name}
         className="w-12 h-12 rounded-full object-cover"
       />
-      <span className="font-archivo font-normal text-xs text-black">
-        {name}
-      </span>
-      <ChevronRight className="w-4 h-4 text-black" />
     </button>
   );
 }

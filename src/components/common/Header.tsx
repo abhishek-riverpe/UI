@@ -45,12 +45,12 @@ const Header = ({
   }, [open]);
 
   return (
-    <header className="relative flex items-center justify-between w-full px-36 py-6">
+    <header className="relative flex items-center justify-end sm:justify-between w-full py-6">
       {/* Logo */}
       <button 
         onClick={() => navigate("/")} 
         aria-label="Go to dashboard" 
-        className="w-fit"
+        className="w-fit hidden sm:block"
       >
         <img className="h-6 w-auto" alt="Riverpe" src="/Logo.png" />
       </button>
@@ -69,17 +69,8 @@ const Header = ({
               <p className="text-sm font-medium text-gray-900 truncate">
                 {user?.firstName || user?.lastName ? `${user?.firstName ?? ""} ${user?.lastName ?? ""}`.trim() : displayName}
               </p>
-              {user?.username && showEmail && (
-                <p className="text-xs text-gray-500 truncate">{user.username}</p>
-              )}
               {user?.username && (
-                <button
-                  type="button"
-                  onClick={() => setShowEmail((v) => !v)}
-                  className="mt-1 text-xs text-blue-600 hover:underline"
-                >
-                  {showEmail ? "Hide email" : "Show email"}
-                </button>
+                <p className="text-xs text-gray-500 truncate">{user.username}</p>
               )}
             </div>
             <div className="h-px bg-gray-200 my-2" />

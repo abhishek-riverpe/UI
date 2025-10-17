@@ -43,7 +43,7 @@ export default function QuickActions({
                 a.onClick?.();
               }}
               className={cn(
-                "relative text-left w-full h-full rounded-[28px] border px-8 py-9 transition-all",
+                "relative text-left w-full h-full rounded-[28px] border px-4 xl:px-8 py-4 xl:py-10 transition-all",
                 "focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-[#0B5FFF]",
                 inactive
                   ? "bg-gray-100 border-gray-200"
@@ -76,7 +76,7 @@ export default function QuickActions({
               <h3
                 className={cn(
                   "[font-family:'Archivo',Helvetica] font-semibold leading-tight mb-3",
-                  "text-[18px]",
+                  "text-[16px] xl:text-[18px]",
                   inactive ? "text-gray-500" : "text-[#0B5FFF]"
                 )}
               >
@@ -86,7 +86,7 @@ export default function QuickActions({
               {/* Description */}
               <p
                 className={cn(
-                  "[font-family:'Archivo',Helvetica] text-sm",
+                  "[font-family:'Archivo',Helvetica] text-xs xl:text-sm",
                   inactive ? "text-gray-500" : "text-gray-700"
                 )}
               >
