@@ -31,26 +31,35 @@ const footerLinks = {
 export const CallToActionSection = (): JSX.Element => {
   return (
     <section className="flex flex-col w-full">
-      <div className="relative w-full h-[640px] bg-[#005aee] overflow-hidden">
-        <div className="absolute top-[76px] left-[104px] w-[647px]">
-          <h2 className="[font-family:'Neue_Haas_Grotesk_Display_Pro-Mediu',Helvetica] font-normal text-white text-[64px] leading-[1.2] tracking-[0]">
-            Ready to make cross-border payouts simple?
-          </h2>
+      <div className="relative w-full h-auto min-h-[400px] lg:h-[640px] bg-[#005aee] overflow-hidden">
+        {/* Content Container */}
+        <div className="relative z-10 flex flex-col items-center lg:items-start justify-center h-full px-6 lg:px-[104px] py-12 lg:py-0">
+          <div className="max-w-[647px] text-center lg:text-left">
+            <h2 className="[font-family:'Neue_Haas_Grotesk_Display_Pro-Mediu',Helvetica] font-normal text-white text-3xl lg:text-[64px] leading-tight lg:leading-[1.2] tracking-[0] mb-6 lg:mb-8">
+              Ready to make cross-border payouts simple?
+            </h2>
+            
+            <p className="[font-family:'Archivo',Helvetica] font-medium text-white text-lg lg:text-2xl tracking-[0] leading-relaxed lg:leading-[1.3] mb-8 lg:mb-12">
+              Open a virtual USD account, convert at the real Google rate, and pay
+              a flat 0.25% fee.
+            </p>
+            
+            <Button className="bg-[#0c0c0c] hover:bg-[#1a1a1a] text-white w-full sm:w-auto px-12 lg:px-20 py-4 lg:py-3 rounded-lg h-auto [font-family:'Archivo',Helvetica] font-semibold text-base">
+              Get Started
+            </Button>
+          </div>
         </div>
 
-        <div className="absolute top-[331px] left-[104px] w-[571px]">
-          <p className="[font-family:'Archivo',Helvetica] font-medium text-white text-2xl tracking-[0] leading-[1.3]">
-            Open a virtual USD account, convert at the real Google rate, and pay
-            a flat 0.25% fee.
-          </p>
-        </div>
-
-        <Button className="absolute top-[468px] left-[104px] bg-[#0c0c0c] hover:bg-[#1a1a1a] text-white px-20 py-3 rounded-lg h-auto [font-family:'Archivo',Helvetica] font-semibold text-base">
-          Get Started
-        </Button>
-
+        {/* Background Image - Hidden on mobile, positioned on desktop */}
         <img
-          className="absolute w-[39.69%] h-[111.84%] top-[22.34%] left-[54.27%] object-contain"
+          className="hidden lg:block absolute w-[39.69%] h-[111.84%] top-[22.34%] left-[54.27%] object-contain"
+          alt="Element space black"
+          src="/006-space-black.png"
+        />
+        
+        {/* Mobile Background Image */}
+        <img
+          className="lg:hidden absolute inset-0 w-full h-full object-cover opacity-20"
           alt="Element space black"
           src="/006-space-black.png"
         />

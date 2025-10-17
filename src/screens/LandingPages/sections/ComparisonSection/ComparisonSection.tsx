@@ -1,5 +1,4 @@
 import { ArrowUpIcon } from "lucide-react";
-import React from "react";
 import { Card, CardContent } from "../../../../components/ui/card";
 
 const tableHeaders = [
@@ -58,22 +57,23 @@ const comparisonData = [
   },
 ];
 
-export const ComparisonSection = (): JSX.Element => {
+export const  ComparisonSection = (): JSX.Element => {
   return (
-    <section className="relative w-full bg-[#efefef] py-[84px] px-10">
+    <section className="relative w-full bg-[#efefef] py-12 lg:py-[84px] px-4 lg:px-10">
       <div className="flex flex-col items-center gap-2.5 max-w-[1400px] mx-auto px-4">
-        <h2 className="font-bold [font-family:'Neue_Haas_Grotesk_Display_Pro-Mediu',Helvetica] text-black text-5xl text-center tracking-[0] leading-[normal]">
+        <h2 className="font-bold [font-family:'Neue_Haas_Grotesk_Display_Pro-Mediu',Helvetica] text-black text-2xl lg:text-5xl text-center tracking-[0] leading-[normal]">
           Keep more of every payout with Google&apos;s mid-market rate to India
         </h2>
 
-        <p className=" mt-4 mb-4 [font-family:'Archivo',Helvetica] font-light text-[#1f1f1f] text-2xl text-center tracking-[0] leading-9">
+        <p className="mt-4 mb-4 [font-family:'Archivo',Helvetica] font-light text-[#1f1f1f] text-lg lg:text-2xl text-center tracking-[0] leading-6 lg:leading-9">
           Riverpe uses the real Google rate and a simple 0.25 percent fee. No
           hidden spreads, clear totals upfront.
         </p>
       </div>
 
-      <div className="max-w-[1407px] mt-20 flex justify-center mx-auto overflow-visible">
-        <Card className="w-[1200px] bg-white rounded-3xl overflow-visible border-0  shadow-none">
+      {/* Desktop Table */}
+      <div className="hidden lg:block max-w-[1407px] mt-20 mx-auto overflow-visible">
+        <Card className="w-full max-w-[1200px] mx-auto bg-white rounded-3xl overflow-visible border-0 shadow-none">
           <CardContent className="p-0">
             <div className="flex border-b border-[#acacac]">
               <div className="flex items-center font-semibold justify-center w-[300px] h-[98px] [font-family:'Neue_Haas_Grotesk_Display_Pro-Mediu',Helvetica] text-black text-2xl text-center tracking-[0] leading-9">
@@ -95,7 +95,7 @@ export const ComparisonSection = (): JSX.Element => {
                 key={row.provider}
                 className={`flex ${
                   row.highlighted
-                    ? "bg-[#0059ed] h-[120px] -mx-[56px] px-[46px] rounded-3xl "
+                    ? "bg-blue-700 h-[120px] -mx-[30px] px-[46px] rounded-3xl "
                     : "h-[100px]"
                 } ${
                   index < comparisonData.length - 1 && !row.highlighted
@@ -151,7 +151,78 @@ export const ComparisonSection = (): JSX.Element => {
                       </div>
                     </div>
                   ) : (
-                    <div className="font-semibold [font-family:'Neue_Haas_Grotesk_Display_Pro-Mediu',Helvetica]  text-[#222222] text-2xl text-center tracking-[0] leading-[normal]">
+                    <div className="font-semibold [font-family:'Neue_Haas_Grotesk_Display_Pro-Mediu',Helvetica] text-[#222222] text-2xl text-center tracking-[0] leading-[normal]">
+                      {row.recipientGets}
+                    </div>
+                  )}
+                </div>
+              </div>
+            ))}
+          </CardContent>
+        </Card>
+      </div>
+
+      {/* Mobile Table */}
+      <div className="lg:hidden mt-8 max-w-md mx-auto">
+        <Card className="bg-white rounded-3xl overflow-hidden border-0 shadow-none">
+          <CardContent className="p-0">
+            {/* Header */}
+            <div className="flex border-b border-[#acacac]">
+              <div className="flex items-center justify-center w-1/2 h-14 [font-family:'Neue_Haas_Grotesk_Display_Pro-Mediu',Helvetica] font-semibold text-black text-base text-center tracking-[0] leading-6">
+                Provider
+              </div>
+              <div className="flex items-center justify-center w-1/2 h-14 [font-family:'Neue_Haas_Grotesk_Display_Pro-Mediu',Helvetica] font-semibold text-black text-base text-center tracking-[0] leading-6">
+                Recipient gets
+              </div>
+            </div>
+
+            {/* Rows */}
+            {comparisonData.map((row, index) => (
+              <div
+                key={row.provider}
+                className={`flex ${
+                  row.highlighted
+                    ? "bg-[#005aee] h-20 -mx-6 px-6 rounded-2xl my-1"
+                    : "h-14"
+                } ${
+                  index < comparisonData.length - 1 && !row.highlighted
+                    ? "border-b border-[#acacac]"
+                    : ""
+                }`}
+              >
+                <div className="flex items-center justify-center w-1/2">
+                  {row.provider === "Remitly" ? (
+                    <div className="flex items-center justify-center p-2">
+                      <img
+                        className="h-6 object-contain"
+                        alt={`${row.provider} logo`}
+                        src={row.logo}
+                      />
+                    </div>
+                  ) : (
+                    <img
+                      className="h-6 object-contain"
+                      alt={`${row.provider} logo`}
+                      src={row.logo}
+                    />
+                  )}
+                </div>
+
+                <div className="flex items-center justify-center w-1/2">
+                  {row.highlighted ? (
+                    <div className="flex flex-col items-center">
+                      <div className="font-semibold [font-family:'Neue_Haas_Grotesk_Display_Pro-Mediu',Helvetica] text-white text-xl tracking-[0] leading-[normal]">
+                        {row.recipientGets}
+                      </div>
+                      <div className="flex items-center gap-1">
+                        <ArrowUpIcon className="w-4 h-4 text-[#00ff44]" />
+                        <div className="[font-family:'Neue_Haas_Grotesk_Display_Pro-Mediu',Helvetica] font-normal text-[#00ff44] text-xs text-center tracking-[0] leading-[normal]">
+                          {row.earnMore}
+                        </div>
+                      </div>
+                    </div>
+                  ) : (
+                    <div className="font-semibold [font-family:'Neue_Haas_Grotesk_Display_Pro-Mediu',Helvetica] text-[#222222] text-base text-center tracking-[0] leading-[normal]">
                       {row.recipientGets}
                     </div>
                   )}
