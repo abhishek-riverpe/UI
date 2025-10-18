@@ -206,7 +206,7 @@ export const WithdrawFundsPage = ({
             <div className="flex flex-col gap-3 w-full">
               <Button
                 onClick={kycContent.onPrimary}
-                className="w-full px-6 py-6 text-base font-bold rounded-xl bg-[#005AEE] hover:bg-[#0052CC] text-white"
+                className="w-screen px-6 py-6 text-base font-bold rounded-xl bg-[#005AEE] hover:bg-[#0052CC] text-white"
                 style={{ fontFamily: 'Archivo, sans-serif' }}
               >
                 {kycContent.primaryBtn}

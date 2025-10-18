@@ -45,7 +45,7 @@ const Header = ({
   }, [open]);
 
   return (
-    <header className="relative flex items-center justify-end sm:justify-between w-full py-6">
+    <header className="relative flex items-center justify-end sm:justify-between w-full py-2">
       {/* Logo */}
       <button 
         onClick={() => navigate("/")} 

@@ -4,6 +4,7 @@ import { Button } from "../../../components/ui/button";
 import { api } from "../../../lib/api";
 import { BACKEND_URL } from "../../../lib/urls";
 import { useAppContext } from "../../../context/AppContext";
+import Header from "@/components/common/Header";
 
 type Step = "email" | "password";
 
@@ -68,7 +69,11 @@ export const SigninPage = (): JSX.Element => {
           />
         </Link>
       </header>
-
+      {/* <div className="sticky top-0 z-40 bg-[#FAFAFA]">
+        <div className="px-4 sm:px-6 lg:px-8">
+          <Header />
+        </div>
+      </div> */}
       <main className="flex-1 flex items-center justify-center px-4 py-10">
         <div className="w-full max-w-[540px]">
           <h1 

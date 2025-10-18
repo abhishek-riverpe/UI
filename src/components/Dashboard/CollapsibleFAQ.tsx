@@ -32,7 +32,7 @@ export const CollapsibleFAQ = ({ title, faqs }: CollapsibleFAQProps): JSX.Elemen
         style={{
           fontFamily: "'Neue Haas Grotesk Display Pro', -apple-system, BlinkMacSystemFont, sans-serif",
           fontWeight: 600,
-          fontSize: "24px",
+          fontSize: "clamp(20px, 4vw, 24px)",
           lineHeight: "1.2",
           color: "#222222"
         }}
@@ -44,8 +44,8 @@ export const CollapsibleFAQ = ({ title, faqs }: CollapsibleFAQProps): JSX.Elemen
       <div 
         className="flex flex-col items-stretch self-stretch"
         style={{
-          gap: "32px",
-          padding: "36px",
+          gap: "clamp(16px, 4vw, 32px)",
+          padding: "clamp(24px, 5vw, 36px)",
           border: "1px solid #ACACAC",
           borderRadius: "16px"
         }}
@@ -67,7 +67,7 @@ export const CollapsibleFAQ = ({ title, faqs }: CollapsibleFAQProps): JSX.Elemen
                 style={{
                   fontFamily: "'Neue Haas Grotesk Display Pro', -apple-system, BlinkMacSystemFont, sans-serif",
                   fontWeight: 600,
-                  fontSize: "16px",
+                  fontSize: "clamp(14px, 3vw, 16px)",
                   lineHeight: "1.5",
                   color: "#222222"
                 }}
@@ -77,6 +77,7 @@ export const CollapsibleFAQ = ({ title, faqs }: CollapsibleFAQProps): JSX.Elemen
               <ChevronDown 
                 size={24} 
                 color="#000000" 
+                className="flex-shrink-0"
                 style={{
                   transform: openItems.has(faq.id) ? "rotate(180deg)" : "rotate(0deg)",
                   transition: "transform 0.2s ease"
@@ -98,7 +99,7 @@ export const CollapsibleFAQ = ({ title, faqs }: CollapsibleFAQProps): JSX.Elemen
                   style={{
                     fontFamily: "'Neue Haas Grotesk Display Pro', -apple-system, BlinkMacSystemFont, sans-serif",
                     fontWeight: 500,
-                    fontSize: "16px",
+                    fontSize: "clamp(14px, 3vw, 16px)",
                     lineHeight: "1.5",
                     color: "#222222"
                   }}

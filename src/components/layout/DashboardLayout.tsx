@@ -21,7 +21,7 @@ export const DashboardLayout = (): JSX.Element => {
         </div>
 
         {/* Main content area */}
-        <main className="flex-1 min-h-[calc(100vh-120px)] overflow-y-auto md:px-8 lg:px-12 pt-4 md:pt-6">
+        <main className="flex-1 min-h-[calc(100vh-120px)] overflow-y-auto overflow-x-hiddenl md:px-8 lg:px-12 pt-4 md:pt-6">
           <Outlet />
         </main>
       </div>

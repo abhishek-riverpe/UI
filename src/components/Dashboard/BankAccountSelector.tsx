@@ -44,13 +44,18 @@ export const BankAccountSelector = ({
             <span>Takes 2 minutes</span>
             <span>Required for withdrawals</span>
           </div>
-          
           <Button 
+              onClick={onLinkAccount}
+              className="w-full  bg-blue-600 rounded-xl hover:bg-blue-700 text-white px-8 sm:px-16 md:px-24 lg:px-32 py-6 text-base sm:text-lg"
+            >
+              Link your INR account
+            </Button>
+          {/* <Button 
             onClick={onLinkAccount}
-            className="bg-blue-600 rounded-xl hover:bg-blue-700 text-white px-[38%] py-6 text-lg"
+            className="w-screen bg-blue-600 rounded-xl hover:bg-blue-700 text-white px-[38%] py-6 text-lg"
           >
             Link your INR account
-          </Button>
+          </Button> */}
         </div>
       </div>
     );

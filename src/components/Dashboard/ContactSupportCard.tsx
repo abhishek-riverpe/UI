@@ -1,4 +1,3 @@
-
 interface ContactOption {
   id: string;
   title: string;
@@ -22,7 +21,7 @@ export const ContactSupportCard = ({ title, options, onContactSupport }: Contact
         style={{
           fontFamily: "'Neue Haas Grotesk Display Pro', -apple-system, BlinkMacSystemFont, sans-serif",
           fontWeight: 600,
-          fontSize: "24px",
+          fontSize: "clamp(20px, 4vw, 24px)",
           lineHeight: "1.2",
           color: "#222222"
         }}
@@ -34,8 +33,8 @@ export const ContactSupportCard = ({ title, options, onContactSupport }: Contact
       <div 
         className="flex flex-col self-stretch"
         style={{
-          gap: "32px",
-          padding: "36px",
+          gap: "clamp(16px, 4vw, 32px)",
+          padding: "clamp(24px, 5vw, 36px)",
           border: "1px solid #ACACAC",
           borderRadius: "16px"
         }}
@@ -44,20 +43,20 @@ export const ContactSupportCard = ({ title, options, onContactSupport }: Contact
           <div key={option.id}>
             {/* Option Row */}
             <div 
-              className="flex justify-between items-center"
+              className="flex flex-col sm:flex-row justify-between items-start sm:items-center"
               style={{
-                gap: "10px",
+                gap: "16px",
                 padding: "12px",
                 borderRadius: "12px"
               }}
             >
               {/* Left Side - Text Content */}
-              <div className="flex flex-col" style={{ gap: "4px", width: "490.5px" }}>
+              <div className="flex flex-col" style={{ gap: "4px" }}>
                 <div 
                   style={{
                     fontFamily: "'Neue Haas Grotesk Display Pro', -apple-system, BlinkMacSystemFont, sans-serif",
                     fontWeight: 600,
-                    fontSize: "16px",
+                    fontSize: "clamp(14px, 3vw, 16px)",
                     lineHeight: "1.5",
                     color: "#222222"
                   }}
@@ -68,7 +67,7 @@ export const ContactSupportCard = ({ title, options, onContactSupport }: Contact
                   style={{
                     fontFamily: "'Neue Haas Grotesk Display Pro', -apple-system, BlinkMacSystemFont, sans-serif",
                     fontWeight: 500,
-                    fontSize: "12px",
+                    fontSize: "clamp(11px, 2.5vw, 12px)",
                     lineHeight: "2",
                     color: "#575757"
                   }}
@@ -80,6 +79,7 @@ export const ContactSupportCard = ({ title, options, onContactSupport }: Contact
               {/* Right Side - Button */}
               <button
                 onClick={() => onContactSupport(option.id)}
+                className="w-full sm:w-auto"
                 style={{
                   display: "flex",
                   alignItems: "center",
@@ -87,7 +87,6 @@ export const ContactSupportCard = ({ title, options, onContactSupport }: Contact
                   gap: "8px",
                   padding: "12px 16px",
                   minHeight: "40px",
-                  minWidth: "120px",
                   border: option.buttonText === "Start a chat" ? "none" : "1px solid #ACACAC",
                   borderRadius: "8px",
                   cursor: "pointer",
@@ -110,7 +109,7 @@ export const ContactSupportCard = ({ title, options, onContactSupport }: Contact
                   style={{
                     fontFamily: "'Archivo', sans-serif",
                     fontWeight: 500,
-                    fontSize: "14px",
+                    fontSize: "clamp(12px, 2.5vw, 14px)",
                     lineHeight: "1.2",
                     textAlign: "center",
                     color: option.buttonText === "Start a chat" ? "#FFFFFF" : "#222222",
