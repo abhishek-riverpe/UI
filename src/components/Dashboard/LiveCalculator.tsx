@@ -92,7 +92,7 @@ const fetchExchangeRate = async (): Promise<number> => {
 };
 
 /** ---- Component ---- */
-export default function LiveCalculator() {
+export default function   LiveCalculator() {
   const [direction, setDirection] = React.useState<Direction>("USD_TO_INR");
   const [sourceAmount, setSourceAmount] = React.useState<string>("1000.00");
   const [exchangeRate, setExchangeRate] = React.useState<number>(83.5);
@@ -173,7 +173,7 @@ export default function LiveCalculator() {
   const calculatedFee = srcIsUSD ? (num * feePercentage) / 100 : ((num / rate) * feePercentage) / 100;
 
   return (
-    <section className="max-w-5xl w-full">
+    <section className="w-full">
       <div className="flex items-center justify-between mb-6">
         <h2 className="[font-family:'Archivo',Helvetica] font-semibold text-2xl text-black">
           Live Calculator

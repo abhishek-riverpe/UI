@@ -4,6 +4,7 @@ import { Button } from "../../../components/ui/button";
 import { api } from "../../../lib/api";
 import { useAppContext } from "../../../context/AppContext";
 import { BACKEND_URL } from "../../../lib/urls";
+import Header from "@/components/common/Header";
 
 export const Signup = (): JSX.Element => {
   const navigate = useNavigate();
@@ -59,7 +60,11 @@ export const Signup = (): JSX.Element => {
           />
         </Link>
       </header>
-
+      {/* <div className="sticky top-0 z-40 bg-[#FAFAFA]">
+        <div className="px-4 sm:px-6 lg:px-8">
+          <Header />
+        </div>
+      </div> */}
       <main className="flex-1 flex items-center justify-center px-4 py-10">
         <div className="w-full max-w-[490px]">
           <h1 className="text-center [font-family:'Archivo',Helvetica] font-semibold text-[32px] text-black tracking-[0] leading-[1.2] mb-12">

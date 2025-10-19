@@ -49,11 +49,11 @@ export const LinkBankAccountModal = ({
     }));
   };
 
-  if (!isOpen) return null;
+  if (!isOpen) return <></>;
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-      <div className="bg-white rounded-3xl p-6 w-full max-w-lg mx-4">
+    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50" onClick={onClose}>
+      <div className="bg-white rounded-3xl p-6 w-full max-w-lg mx-4" onClick={(e) => e.stopPropagation()}>
         {/* Header */}
         <div className="flex items-center justify-between mb-6">
           <div className="flex items-center gap-3">

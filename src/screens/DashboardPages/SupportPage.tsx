@@ -55,14 +55,14 @@ export const SupportPage = (): JSX.Element => {
   };
 
   return (
-    <div className="flex flex-col" style={{ gap: "40px", width: "855px" }}>
+    <div className="w-full flex flex-col px-4 sm:px-6 md:px-8" style={{ gap: "clamp(24px, 5vw, 40px)" }}>
       {/* Page Title */}
       <div className="flex flex-col self-stretch" style={{ gap: "12px" }}>
         <h1 
           style={{
             fontFamily: "'Neue Haas Grotesk Display Pro', -apple-system, BlinkMacSystemFont, sans-serif",
             fontWeight: 600,
-            fontSize: "32px",
+            fontSize: "clamp(24px, 5vw, 32px)",
             lineHeight: "1.2",
             color: "#222222"
           }}

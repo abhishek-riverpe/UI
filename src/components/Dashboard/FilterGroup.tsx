@@ -29,38 +29,40 @@ export const FilterGroup = ({
   onTimeFilterChange
 }: FilterGroupProps): JSX.Element => {
   return (
-    <div className="flex items-center gap-3 mb-6">
-      {/* Filter Buttons */}
-      {filters.map((filter) => (
+    <div className="mb-6 px-4 sm:px-0 overflow-x-scroll">
+      <div className="flex items-center gap-1.5 sm:gap-3">
+        {/* Filter Buttons */}
+        {filters.map((filter) => (
+          <button
+            key={filter.value}
+            onClick={() => onFilterChange(filter.value)}
+            className={`px-1.5 xs:px-2 sm:px-4 py-1.5 xs:py-2 sm:py-3 rounded-lg font-bold text-[10px] xs:text-xs sm:text-base transition-colors whitespace-nowrap flex-shrink-0 ${
+              filter.active
+                ? filterButtonSyles[filter.value as keyof typeof filterButtonSyles]
+                : 'bg-white text-black border border-gray-300 hover:bg-gray-50'
+            }`}
+          >
+            {filter.label}
+          </button>
+        ))}
+        
+        {/* Time Filter Dropdown */}
+        <div className="relative flex-shrink-0">
+          <button className="px-1.5 xs:px-2 sm:px-4 py-1.5 xs:py-2 sm:py-2 rounded-lg bg-white text-black border border-gray-300 hover:bg-gray-50 flex items-center gap-1 sm:gap-2 text-[10px] xs:text-xs sm:text-base whitespace-nowrap">
+            <span>{timeFilter}</span>
+            <ChevronDown className="w-2.5 xs:w-3 sm:w-4 h-2.5 xs:h-3 sm:h-4" />
+          </button>
+        </div>
+        
+        {/* Clear All */}
         <button
-          key={filter.value}
-          onClick={() => onFilterChange(filter.value)}
-          className={`px-4 py-3 rounded-lg font-bold text-base transition-colors ${
-            filter.active
-              ? filterButtonSyles[filter.value as keyof typeof filterButtonSyles]
-              : 'bg-white text-black border border-gray-300 hover:bg-gray-50'
-          }`}
+          onClick={onClearAll}
+          className="flex items-center gap-1 sm:gap-2 text-gray-600 hover:text-gray-800 transition-colors whitespace-nowrap flex-shrink-0"
         >
-          {filter.label}
-        </button>
-      ))}
-      
-      {/* Time Filter Dropdown */}
-      <div className="relative">
-        <button className="px-4 py-2 rounded-lg bg-white text-black border border-gray-300 hover:bg-gray-50 flex items-center gap-2">
-          <span>{timeFilter}</span>
-          <ChevronDown className="w-4 h-4" />
+          <FilterX className="w-4 xs:w-3.5 sm:w-4 h-4 xs:h-3.5 sm:h-4" />
+          <span className="hidden sm:inline text-base">Clear All</span>
         </button>
       </div>
-      
-      {/* Clear All */}
-      <button
-        onClick={onClearAll}
-        className="flex items-center gap-2 text-gray-600 hover:text-gray-800 transition-colors"
-      >
-        <FilterX className="w-4 h-4" />
-        <span>Clear All</span>
-      </button>
     </div>
   );
 };

@@ -212,14 +212,16 @@ export const KYCPage: React.FC<KYCPageProps> = ({
   };
 
   return (
-    <div className="flex flex-col" style={{ gap: "60px", width: "855px" }}>
+    <div className="w-full flex flex-col px-4 sm:px-6 md:px-8" 
+      style={{ gap: "clamp(24px, 5vw, 40px)" }}
+    >
       {/* Page Title */}
       <div className="flex flex-col self-stretch" style={{ gap: "12px" }}>
         <h1
           style={{
             fontFamily: "'Neue Haas Grotesk Display Pro', -apple-system, BlinkMacSystemFont, sans-serif",
             fontWeight: 600,
-            fontSize: "32px",
+            fontSize: "clamp(24px, 5vw, 32px)",
             lineHeight: "1.2",
             color: "#222222"
           }}
@@ -230,37 +232,39 @@ export const KYCPage: React.FC<KYCPageProps> = ({
 
       {/* Verification Status Card */}
       <div
-        className="flex justify-between items-center"
+        className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4"
         style={{
-          padding: "24px",
+          padding: "clamp(16px, 3vw, 24px)",
           border: "1px solid #ACACAC",
           borderRadius: "12px",
-          width: "855px"
+          width: "100%",
+          // maxWidth: "855px"
         }}
       >
-        <div className="flex items-center" style={{ gap: "16px" }}>
+        <div className="flex items-center w-full sm:w-auto" style={{ gap: "12px" }}>
           {/* Status Icon */}
           <div
             style={{
-              width: "48px",
-              height: "48px",
+              width: "clamp(40px, 8vw, 48px)",
+              height: "clamp(40px, 8vw, 48px)",
               backgroundColor: statusContent.iconBg,
               borderRadius: "50%",
               display: "flex",
               alignItems: "center",
-              justifyContent: "center"
+              justifyContent: "center",
+              flexShrink: 0
             }}
           >
             <CheckCircle size={24} color="#FFFFFF" />
           </div>
 
           {/* Status Content */}
-          <div className="flex flex-col" style={{ gap: "4px" }}>
+          <div className="flex flex-col flex-1 w-full min-w-0" style={{ gap: "4px" }}>
             <h2
               style={{
                 fontFamily: "'Neue Haas Grotesk Display Pro', -apple-system, BlinkMacSystemFont, sans-serif",
                 fontWeight: 600,
-                fontSize: "20px",
+                fontSize: "clamp(16px, 3vw, 20px)",
                 lineHeight: "1.2",
                 color: "#222222"
               }}
@@ -271,7 +275,7 @@ export const KYCPage: React.FC<KYCPageProps> = ({
               style={{
                 fontFamily: "'Archivo', sans-serif",
                 fontWeight: 400,
-                fontSize: "16px",
+                fontSize: "clamp(13px, 2.5vw, 16px)",
                 lineHeight: "1.25",
                 color: "#575757"
               }}
@@ -283,7 +287,7 @@ export const KYCPage: React.FC<KYCPageProps> = ({
 
         {/* Status Badge */}
         <div
-          className="flex items-center"
+          className="flex items-center flex-shrink-0"
           style={{
             gap: "8px",
             padding: "4px 12px",
@@ -297,7 +301,7 @@ export const KYCPage: React.FC<KYCPageProps> = ({
             style={{
               fontFamily: "'Neue Haas Grotesk Display Pro', -apple-system, BlinkMacSystemFont, sans-serif",
               fontWeight: 600,
-              fontSize: "16px",
+              fontSize: "clamp(13px, 2.5vw, 16px)",
               lineHeight: "1.5",
               color: statusBadge.textColor
             }}
@@ -311,15 +315,15 @@ export const KYCPage: React.FC<KYCPageProps> = ({
 
       {/* Documents Submission Section */}
       {kycStatus === 'additional_docs_required' && (
-        <div className="flex flex-col" style={{ gap: "40px" }}>
+        <div className="flex flex-col" style={{ gap: "clamp(24px, 5vw, 40px)" }}>
           {/* Section Header */}
-          <div className="flex flex-col" style={{ gap: "24px" }}>
+          <div className="flex flex-col" style={{ gap: "clamp(16px, 3vw, 24px)" }}>
             <div className="flex flex-col" style={{ gap: "12px" }}>
               <h2
                 style={{
                   fontFamily: "'Neue Haas Grotesk Display Pro', -apple-system, BlinkMacSystemFont, sans-serif",
                   fontWeight: 600,
-                  fontSize: "32px",
+                  fontSize: "clamp(24px, 5vw, 32px)",
                   lineHeight: "1.2",
                   color: "#222222"
                 }}
@@ -330,7 +334,7 @@ export const KYCPage: React.FC<KYCPageProps> = ({
                 style={{
                   fontFamily: "'Archivo', sans-serif",
                   fontWeight: 400,
-                  fontSize: "16px",
+                  fontSize: "clamp(13px, 2.5vw, 16px)",
                   lineHeight: "1.25",
                   color: "#575757"
                 }}
@@ -343,7 +347,7 @@ export const KYCPage: React.FC<KYCPageProps> = ({
           {/* Required Documents List */}
           <div
             style={{
-              padding: "25px",
+              padding: "clamp(16px, 3vw, 25px)",
               border: "1px solid #ACACAC",
               borderRadius: "12px"
             }}
@@ -353,7 +357,7 @@ export const KYCPage: React.FC<KYCPageProps> = ({
                 style={{
                   fontFamily: "'Neue Haas Grotesk Display Pro', -apple-system, BlinkMacSystemFont, sans-serif",
                   fontWeight: 600,
-                  fontSize: "20px",
+                  fontSize: "clamp(16px, 3vw, 20px)",
                   lineHeight: "1.2",
                   color: "#222222"
                 }}
@@ -369,7 +373,7 @@ export const KYCPage: React.FC<KYCPageProps> = ({
                   className="flex items-center"
                   style={{
                     gap: "12px",
-                    padding: "18px 12px",
+                    padding: "clamp(12px, 2.5vw, 18px) 12px",
                     backgroundColor: "#EFEFEF",
                     borderRadius: "8px"
                   }}
@@ -379,14 +383,15 @@ export const KYCPage: React.FC<KYCPageProps> = ({
                       width: "8px",
                       height: "8px",
                       backgroundColor: "#030213",
-                      borderRadius: "50%"
+                      borderRadius: "50%",
+                      flexShrink: 0
                     }}
                   />
                   <span
                     style={{
                       fontFamily: "'Archivo', sans-serif",
                       fontWeight: 400,
-                      fontSize: "16px",
+                      fontSize: "clamp(13px, 2.5vw, 16px)",
                       lineHeight: "1.25",
                       color: "#000000"
                     }}
@@ -401,7 +406,7 @@ export const KYCPage: React.FC<KYCPageProps> = ({
           {/* Upload Area */}
           <div
             style={{
-              padding: "32px",
+              padding: "clamp(16px, 4vw, 32px)",
               backgroundColor: "#FFFFFF",
               border: "1px solid #ACACAC",
               borderRadius: "16px"
@@ -411,8 +416,8 @@ export const KYCPage: React.FC<KYCPageProps> = ({
             <div
               className="flex flex-col items-center"
               style={{
-                gap: "30px",
-                padding: "24px 16px 48px",
+                gap: "clamp(16px, 4vw, 30px)",
+                padding: "clamp(16px, 3vw, 24px) 16px clamp(24px, 5vw, 48px)",
                 border: `1px dashed #ACACAC`,
                 borderRadius: "8px",
                 backgroundColor: isDragOver ? "#F8F9FA" : "transparent"
@@ -422,8 +427,8 @@ export const KYCPage: React.FC<KYCPageProps> = ({
               onDrop={handleDrop}
             >
               {/* Upload Icon */}
-              <div style={{ width: "250px", height: "250px" }}>
-                <img src="/illustrations/upload-illustration.svg" alt="upload" />
+              <div style={{ width: "clamp(150px, 30vw, 250px)", height: "clamp(150px, 30vw, 250px)" }}>
+                <img src="/illustrations/upload-illustration.svg" alt="upload" style={{ width: "100%", height: "100%", objectFit: "contain" }} />
               </div>
 
               {/* Upload Text */}
@@ -432,7 +437,7 @@ export const KYCPage: React.FC<KYCPageProps> = ({
                   style={{
                     fontFamily: "'Neue Haas Grotesk Display Pro', -apple-system, BlinkMacSystemFont, sans-serif",
                     fontWeight: 600,
-                    fontSize: "20px",
+                    fontSize: "clamp(16px, 3vw, 20px)",
                     lineHeight: "1.2",
                     color: "#222222",
                     textAlign: "center"
@@ -444,7 +449,7 @@ export const KYCPage: React.FC<KYCPageProps> = ({
                   style={{
                     fontFamily: "'Neue Haas Grotesk Display Pro', -apple-system, BlinkMacSystemFont, sans-serif",
                     fontWeight: 500,
-                    fontSize: "16px",
+                    fontSize: "clamp(13px, 2.5vw, 16px)",
                     lineHeight: "1.2",
                     color: "#8C8C8C",
                     textAlign: "center"
@@ -456,10 +461,10 @@ export const KYCPage: React.FC<KYCPageProps> = ({
 
               {/* Choose File Button */}
               <div
-                className="flex items-center justify-center"
+                className="flex items-center justify-center w-full sm:w-auto"
                 style={{
                   gap: "10px",
-                  padding: "16px 24px",
+                  padding: "clamp(12px, 2.5vw, 16px) clamp(16px, 3vw, 24px)",
                   backgroundColor: "#005AEE",
                   borderRadius: "12px"
                 }}
@@ -477,7 +482,7 @@ export const KYCPage: React.FC<KYCPageProps> = ({
                   style={{
                     fontFamily: "'Archivo', sans-serif",
                     fontWeight: 700,
-                    fontSize: "16px",
+                    fontSize: "clamp(14px, 2.5vw, 16px)",
                     lineHeight: "1.088",
                     color: "#FFFFFF",
                     cursor: "pointer"
@@ -490,13 +495,13 @@ export const KYCPage: React.FC<KYCPageProps> = ({
 
             {/* Uploaded Documents */}
             {uploadedDocuments.length > 0 && (
-              <div className="flex flex-col" style={{ gap: "40px", marginTop: "40px" }}>
+              <div className="flex flex-col" style={{ gap: "clamp(24px, 4vw, 40px)", marginTop: "clamp(24px, 4vw, 40px)" }}>
                 <div className="flex flex-col" style={{ gap: "12px" }}>
                   <h3
                     style={{
                       fontFamily: "'Neue Haas Grotesk Display Pro', -apple-system, BlinkMacSystemFont, sans-serif",
                       fontWeight: 600,
-                      fontSize: "24px",
+                      fontSize: "clamp(18px, 3.5vw, 24px)",
                       lineHeight: "1.2",
                       color: "#222222"
                     }}
@@ -507,7 +512,7 @@ export const KYCPage: React.FC<KYCPageProps> = ({
                     style={{
                       fontFamily: "'Archivo', sans-serif",
                       fontWeight: 400,
-                      fontSize: "16px",
+                      fontSize: "clamp(13px, 2.5vw, 16px)",
                       lineHeight: "1.25",
                       color: "#575757"
                     }}
@@ -521,30 +526,32 @@ export const KYCPage: React.FC<KYCPageProps> = ({
                   {uploadedDocuments.map((doc) => (
                     <div
                       key={doc.id}
-                      className="flex justify-between items-center"
+                      className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3"
                       style={{
-                        gap: "12px",
-                        padding: "20px",
+                        padding: "clamp(12px, 2.5vw, 20px)",
                         backgroundColor: "#FFFFFF",
                         border: "1px solid #ACACAC",
                         borderRadius: "8px"
                       }}
                     >
-                      <div className="flex items-center" style={{ gap: "24px" }}>
-                        <div className="flex items-center" style={{ gap: "16px" }}>
+                      <div className="flex items-center w-full sm:w-auto" style={{ gap: "clamp(12px, 3vw, 24px)" }}>
+                        <div className="flex items-center flex-1 min-w-0" style={{ gap: "clamp(12px, 2.5vw, 16px)" }}>
                           {doc.type === 'pdf' ? (
-                            <FileText size={24} color="#222222" />
+                            <FileText size={24} color="#222222" className="flex-shrink-0" />
                           ) : (
-                            <Image size={24} color="#222222" />
+                            <Image size={24} color="#222222" className="flex-shrink-0" />
                           )}
-                          <div className="flex flex-col" style={{ gap: "4px" }}>
+                          <div className="flex flex-col flex-1 min-w-0" style={{ gap: "4px" }}>
                             <span
                               style={{
                                 fontFamily: "'Neue Haas Grotesk Display Pro', -apple-system, BlinkMacSystemFont, sans-serif",
                                 fontWeight: 600,
-                                fontSize: "16px",
+                                fontSize: "clamp(13px, 2.5vw, 16px)",
                                 lineHeight: "1.25",
-                                color: "#000000"
+                                color: "#000000",
+                                overflow: "hidden",
+                                textOverflow: "ellipsis",
+                                whiteSpace: "nowrap"
                               }}
                             >
                               {doc.name}
@@ -553,7 +560,7 @@ export const KYCPage: React.FC<KYCPageProps> = ({
                               style={{
                                 fontFamily: "'Archivo', sans-serif",
                                 fontWeight: 400,
-                                fontSize: "12px",
+                                fontSize: "clamp(11px, 2vw, 12px)",
                                 lineHeight: "1.67",
                                 color: "#000000"
                               }}
@@ -563,14 +570,14 @@ export const KYCPage: React.FC<KYCPageProps> = ({
                           </div>
                         </div>
                         {doc.status === 'uploaded' && (
-                          <CircleCheckBig size={24} color="#1AAA7A" />
+                          <CircleCheckBig size={24} color="#1AAA7A" className="flex-shrink-0" />
                         )}
                         {doc.status === 'uploading' && (
-                          <Loader2 size={24} color="#005AEE" className="animate-spin" />
+                          <Loader2 size={24} color="#005AEE" className="animate-spin flex-shrink-0" />
                         )}
                       </div>
 
-                      <div className="flex items-center" style={{ gap: "16px" }}>
+                      <div className="flex items-center w-full sm:w-auto justify-between sm:justify-end" style={{ gap: "clamp(12px, 2.5vw, 16px)" }}>
                         {doc.status === 'uploaded' && (
                           <div
                             className="flex items-center"
@@ -587,7 +594,7 @@ export const KYCPage: React.FC<KYCPageProps> = ({
                               style={{
                                 fontFamily: "'Neue Haas Grotesk Display Pro', -apple-system, BlinkMacSystemFont, sans-serif",
                                 fontWeight: 600,
-                                fontSize: "16px",
+                                fontSize: "clamp(13px, 2.5vw, 16px)",
                                 lineHeight: "1.5",
                                 color: "#137C59"
                               }}
@@ -612,7 +619,7 @@ export const KYCPage: React.FC<KYCPageProps> = ({
                               style={{
                                 fontFamily: "'Neue Haas Grotesk Display Pro', -apple-system, BlinkMacSystemFont, sans-serif",
                                 fontWeight: 600,
-                                fontSize: "16px",
+                                fontSize: "clamp(13px, 2.5vw, 16px)",
                                 lineHeight: "1.5",
                                 color: "#575757"
                               }}
@@ -624,8 +631,9 @@ export const KYCPage: React.FC<KYCPageProps> = ({
                         <button
                           onClick={() => removeDocument(doc.id)}
                           style={{ cursor: "pointer" }}
+                          className="flex-shrink-0"
                         >
-                          <X size={24} color="#FFFFFF" />
+                          <X size={24} color="#000000" />
                         </button>
                       </div>
                     </div>
@@ -636,16 +644,16 @@ export const KYCPage: React.FC<KYCPageProps> = ({
 
             {/* Submit Button */}
             {uploadedDocuments.length >= 2 && (
-              <div className="flex justify-center" style={{ marginTop: "40px" }}>
+              <div className="flex justify-center" style={{ marginTop: "clamp(24px, 4vw, 40px)" }}>
                 <button
                   onClick={handleSubmitDocuments}
-                  className="flex items-center justify-center"
+                  className="flex items-center justify-center w-full"
                   style={{
                     gap: "10px",
-                    padding: "16px 24px",
+                    padding: "clamp(12px, 2.5vw, 16px) clamp(16px, 3vw, 24px)",
                     backgroundColor: "#005AEE",
                     borderRadius: "12px",
-                    width: "791px",
+                    // maxWidth: "791px",
                     cursor: "pointer"
                   }}
                 >
@@ -653,7 +661,7 @@ export const KYCPage: React.FC<KYCPageProps> = ({
                     style={{
                       fontFamily: "'Archivo', sans-serif",
                       fontWeight: 700,
-                      fontSize: "16px",
+                      fontSize: "clamp(14px, 2.5vw, 16px)",
                       lineHeight: "1.088",
                       color: "#FFFFFF"
                     }}
@@ -670,8 +678,9 @@ export const KYCPage: React.FC<KYCPageProps> = ({
       {/* Success/Review State */}
       {(kycStatus === 'verified' || kycStatus === 'in_review') && (
         <div
+          className="flex flex-col items-center"
           style={{
-            padding: "24px",
+            padding: "clamp(16px, 3vw, 24px)",
             backgroundColor: "#F8F9FA",
             border: "1px solid #ACACAC",
             borderRadius: "16px",
@@ -683,7 +692,7 @@ export const KYCPage: React.FC<KYCPageProps> = ({
             style={{
               fontFamily: "'Neue Haas Grotesk Display Pro', -apple-system, BlinkMacSystemFont, sans-serif",
               fontWeight: 600,
-              fontSize: "20px",
+              fontSize: "clamp(16px, 3vw, 20px)",
               lineHeight: "1.2",
               color: "#222222",
               marginBottom: "8px"
@@ -695,7 +704,7 @@ export const KYCPage: React.FC<KYCPageProps> = ({
             style={{
               fontFamily: "'Archivo', sans-serif",
               fontWeight: 400,
-              fontSize: "16px",
+              fontSize: "clamp(13px, 2.5vw, 16px)",
               lineHeight: "1.25",
               color: "#575757"
             }}
