@@ -1,20 +1,52 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { Button } from "../../../components/ui/button";
+import { api } from "../../../lib/api";
+import { useAppContext } from "../../../context/AppContext";
+import { BACKEND_URL } from "../../../lib/urls";
+import Header from "@/components/common/Header";
 
 export const Signup = (): JSX.Element => {
-  
-  const [input, setInput] = useState("");
-  const [isValid, setIsValid] = useState(false);
   const navigate = useNavigate();
-  // Simple regex for email and phone validation
-  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-  const phoneRegex = /^\d{10,15}$/;
+  const { setAuth } = useAppContext();
+  const [firstName, setFirstName] = useState("");
+  const [lastName, setLastName] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
-  const handleChange = (e:any) => {
-    const value = e.target.value;
-    setInput(value);
-    setIsValid(emailRegex.test(value) || phoneRegex.test(value));
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  const canSubmit =
+    firstName.trim().length > 0 &&
+    lastName.trim().length > 0 &&
+    emailRegex.test(email) &&
+    password.length >= 6;
+
+  const handleSubmit = async () => {
+    if (!canSubmit || loading) return;
+    setError(null);
+    setLoading(true);
+    try {
+      const res = await api.post("/api/v1/user/signup", {
+        username: email,
+        password,
+        firstName,
+        lastName,
+      });
+      const token = res.data?.access_token as string;
+      if (token) {
+        setAuth(token, { username: email, firstName, lastName });
+        navigate("/dashboard");
+      } else {
+        setError("Unexpected response from server.");
+      }
+    } catch (e: any) {
+      const msg = e?.response?.data?.detail || "Failed to sign up";
+      setError(msg);
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -28,7 +60,11 @@ export const Signup = (): JSX.Element => {
           />
         </Link>
       </header>
-
+      {/* <div className="sticky top-0 z-40 bg-[#FAFAFA]">
+        <div className="px-4 sm:px-6 lg:px-8">
+          <Header />
+        </div>
+      </div> */}
       <main className="flex-1 flex items-center justify-center px-4 py-10">
         <div className="w-full max-w-[490px]">
           <h1 className="text-center [font-family:'Archivo',Helvetica] font-semibold text-[32px] text-black tracking-[0] leading-[1.2] mb-12">
@@ -43,6 +79,9 @@ export const Signup = (): JSX.Element => {
 
               <Button
                 variant="outline"
+                onClick={() => {
+                  window.location.href = `${BACKEND_URL}/auth/google`;
+                }}
                 className="w-full h-[36px] bg-white border border-gray-300 rounded-lg hover:bg-gray-50 flex items-center justify-center gap-3"
               >
                 <svg width="28" height="28" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -64,26 +103,63 @@ export const Signup = (): JSX.Element => {
 
             <div className="flex flex-col gap-6">
               <div className="flex flex-col gap-2">
-                <label
-                  htmlFor="email"
-                  className="[font-family:'Archivo',Helvetica] font-normal text-base text-black tracking-[0] leading-[normal]"
-                >
-                  Enter your email address or phone number
-                </label>
+                <label htmlFor="firstName" className="[font-family:'Archivo',Helvetica] font-normal text-base text-black tracking-[0] leading-[normal]">First name</label>
                 <input
-                  id="email"
-                  value={input}
-                  onChange={(e)=>handleChange(e)}
+                  id="firstName"
+                  value={firstName}
+                  onChange={(e) => setFirstName(e.target.value)}
                   type="text"
+                  placeholder="John"
                   className="w-full h-[46px] bg-white border border-gray-300 rounded-lg px-4 [font-family:'Archivo',Helvetica] font-normal text-base text-black focus:outline-none focus:border-[#2e5cef] focus:ring-1 focus:ring-[#2e5cef]"
                 />
               </div>
 
+              <div className="flex flex-col gap-2">
+                <label htmlFor="lastName" className="[font-family:'Archivo',Helvetica] font-normal text-base text-black tracking-[0] leading-[normal]">Last name</label>
+                <input
+                  id="lastName"
+                  value={lastName}
+                  onChange={(e) => setLastName(e.target.value)}
+                  type="text"
+                  placeholder="Doe"
+                  className="w-full h-[46px] bg-white border border-gray-300 rounded-lg px-4 [font-family:'Archivo',Helvetica] font-normal text-base text-black focus:outline-none focus:border-[#2e5cef] focus:ring-1 focus:ring-[#2e5cef]"
+                />
+              </div>
+
+              <div className="flex flex-col gap-2">
+                <label htmlFor="email" className="[font-family:'Archivo',Helvetica] font-normal text-base text-black tracking-[0] leading-[normal]">Email</label>
+                <input
+                  id="email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  type="email"
+                  placeholder="example@email.com"
+                  className="w-full h-[46px] bg-white border border-gray-300 rounded-lg px-4 [font-family:'Archivo',Helvetica] font-normal text-base text-black focus:outline-none focus:border-[#2e5cef] focus:ring-1 focus:ring-[#2e5cef]"
+                />
+              </div>
+
+              <div className="flex flex-col gap-2">
+                <label htmlFor="password" className="[font-family:'Archivo',Helvetica] font-normal text-base text-black tracking-[0] leading-[normal]">Password</label>
+                <input
+                  id="password"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  type="password"
+                  placeholder="At least 6 characters"
+                  className="w-full h-[46px] bg-white border border-gray-300 rounded-lg px-4 [font-family:'Archivo',Helvetica] font-normal text-base text-black focus:outline-none focus:border-[#2e5cef] focus:ring-1 focus:ring-[#2e5cef]"
+                />
+              </div>
+
+              {error && (
+                <div className="text-red-600 [font-family:'Archivo',Helvetica] text-sm">{error}</div>
+              )}
+
               <Button
-               disabled={!isValid}
-               onClick={()=>navigate("/account-type")}
-                className="w-full h-[46px] bg-[#2e5cef] hover:bg-[#2449c8] text-white rounded-lg [font-family:'Archivo',Helvetica] font-semibold text-base">
-                Sign up
+                disabled={!canSubmit || loading}
+                onClick={handleSubmit}
+                className="w-full h-[46px] bg-[#2e5cef] hover:bg-[#2449c8] text-white rounded-lg [font-family:'Archivo',Helvetica] font-semibold text-base disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                {loading ? "Creating account..." : "Sign up"}
               </Button>
             </div>
 
@@ -102,9 +178,9 @@ export const Signup = (): JSX.Element => {
 
               <p className="text-center [font-family:'Archivo',Helvetica] font-normal text-base text-black tracking-[0] leading-[normal]">
                 Already have an account?{" "}
-                <a href="#" className="font-semibold underline">
+                <Link to="/signin" className="font-semibold underline">
                   Sign in
-                </a>
+                </Link>
                 !
               </p>
             </div>
