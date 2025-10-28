@@ -1,16 +1,21 @@
 import { createContext, useContext, useEffect, useMemo, useState, ReactNode } from "react";
-import { setAuthToken } from "../lib/api";
+import { api, bindTokenAccessors, setAuthToken } from "../lib/api";
+import { AUTH_LOGOUT, AUTH_SIGNIN, AUTH_SIGNUP } from "../lib/urls";
 
 type User = {
-  username: string;
-  firstName?: string;
-  lastName?: string;
+  entity_id: string;
+  email: string;
+  name?: string;
+  status?: string;
 };
 
 type AppContextType = {
   token: string | null;
   user: User | null;
-  setAuth: (token: string, user: User) => void;
+  setAuth: (token: string, user?: User) => void;
+  login: (email: string, password: string) => Promise<void>;
+  signup: (name: string, email: string, password: string) => Promise<void>;
+  logout: () => Promise<void>;
   clearAuth: () => void;
 };
 
@@ -41,11 +46,11 @@ export function AppProvider({ children }: { children: ReactNode }) {
     setAuthToken(token);
   }, [token]);
 
-  const setAuth = (newToken: string, newUser: User) => {
+  const setAuth = (newToken: string, newUser?: User) => {
     setToken(newToken);
-    setUser(newUser);
+    if (newUser) setUser(newUser);
     localStorage.setItem(TOKEN_KEY, newToken);
-    localStorage.setItem(USER_KEY, JSON.stringify(newUser));
+    if (newUser) localStorage.setItem(USER_KEY, JSON.stringify(newUser));
   };
 
   const clearAuth = () => {
@@ -55,8 +60,36 @@ export function AppProvider({ children }: { children: ReactNode }) {
     localStorage.removeItem(USER_KEY);
   };
 
+  // Bind accessors for refresh interceptor
+  useEffect(() => {
+    bindTokenAccessors(
+      () => token,
+      (t: string) => setAuth(t)
+    );
+  }, [token]);
+
+  const login = async (email: string, password: string) => {
+    const res = await api.post(AUTH_SIGNIN, { email, password }, { headers: { "X-RP-Skip-Refresh": "1" } });
+    const { access_token, user } = res.data.data;
+    setAuth(access_token, user);
+  };
+
+  const signup = async (name: string, email: string, password: string) => {
+    const res = await api.post(AUTH_SIGNUP, { name, email, password }, { headers: { "X-RP-Skip-Refresh": "1" } });
+    const { access_token, user } = res.data.data;
+    setAuth(access_token, user);
+  };
+
+  const logout = async () => {
+    try {
+      await api.post(AUTH_LOGOUT, {} , { withCredentials: true });
+    } finally {
+      clearAuth();
+    }
+  };
+
   const value = useMemo(
-    () => ({ token, user, setAuth, clearAuth }),
+    () => ({ token, user, setAuth, login, signup, logout, clearAuth }),
     [token, user]
   );
 

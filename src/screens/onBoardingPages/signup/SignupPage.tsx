@@ -1,48 +1,35 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { Button } from "../../../components/ui/button";
-import { api } from "../../../lib/api";
 import { useAppContext } from "../../../context/AppContext";
 import { BACKEND_URL } from "../../../lib/urls";
-import Header from "@/components/common/Header";
+// import Header from "@/components/common/Header";
 
 export const Signup = (): JSX.Element => {
   const navigate = useNavigate();
-  const { setAuth } = useAppContext();
-  const [firstName, setFirstName] = useState("");
-  const [lastName, setLastName] = useState("");
+  const { signup } = useAppContext();
+  const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
   const canSubmit =
-    firstName.trim().length > 0 &&
-    lastName.trim().length > 0 &&
+    name.trim().length > 0 &&
     emailRegex.test(email) &&
-    password.length >= 6;
+    password.length >= 8;
 
   const handleSubmit = async () => {
     if (!canSubmit || loading) return;
     setError(null);
     setLoading(true);
     try {
-      const res = await api.post("/api/v1/user/signup", {
-        username: email,
-        password,
-        firstName,
-        lastName,
-      });
-      const token = res.data?.access_token as string;
-      if (token) {
-        setAuth(token, { username: email, firstName, lastName });
-        navigate("/dashboard");
-      } else {
-        setError("Unexpected response from server.");
-      }
+      await signup(name.trim(), email, password);
+      navigate("/dashboard");
     } catch (e: any) {
-      const msg = e?.response?.data?.detail || "Failed to sign up";
+      const msg = e?.response?.data?.message || e?.response?.data?.detail || "Failed to sign up";
       setError(msg);
     } finally {
       setLoading(false);
@@ -103,25 +90,13 @@ export const Signup = (): JSX.Element => {
 
             <div className="flex flex-col gap-6">
               <div className="flex flex-col gap-2">
-                <label htmlFor="firstName" className="[font-family:'Archivo',Helvetica] font-normal text-base text-black tracking-[0] leading-[normal]">First name</label>
+                <label htmlFor="name" className="[font-family:'Archivo',Helvetica] font-normal text-base text-black tracking-[0] leading-[normal]">Name</label>
                 <input
-                  id="firstName"
-                  value={firstName}
-                  onChange={(e) => setFirstName(e.target.value)}
+                  id="name"
+                  value={name}
+                  onChange={(e) => setName(e.target.value)}
                   type="text"
-                  placeholder="John"
-                  className="w-full h-[46px] bg-white border border-gray-300 rounded-lg px-4 [font-family:'Archivo',Helvetica] font-normal text-base text-black focus:outline-none focus:border-[#2e5cef] focus:ring-1 focus:ring-[#2e5cef]"
-                />
-              </div>
-
-              <div className="flex flex-col gap-2">
-                <label htmlFor="lastName" className="[font-family:'Archivo',Helvetica] font-normal text-base text-black tracking-[0] leading-[normal]">Last name</label>
-                <input
-                  id="lastName"
-                  value={lastName}
-                  onChange={(e) => setLastName(e.target.value)}
-                  type="text"
-                  placeholder="Doe"
+                  placeholder="Your full name"
                   className="w-full h-[46px] bg-white border border-gray-300 rounded-lg px-4 [font-family:'Archivo',Helvetica] font-normal text-base text-black focus:outline-none focus:border-[#2e5cef] focus:ring-1 focus:ring-[#2e5cef]"
                 />
               </div>
@@ -140,14 +115,36 @@ export const Signup = (): JSX.Element => {
 
               <div className="flex flex-col gap-2">
                 <label htmlFor="password" className="[font-family:'Archivo',Helvetica] font-normal text-base text-black tracking-[0] leading-[normal]">Password</label>
-                <input
-                  id="password"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  type="password"
-                  placeholder="At least 6 characters"
-                  className="w-full h-[46px] bg-white border border-gray-300 rounded-lg px-4 [font-family:'Archivo',Helvetica] font-normal text-base text-black focus:outline-none focus:border-[#2e5cef] focus:ring-1 focus:ring-[#2e5cef]"
-                />
+                <div className="relative">
+                  <input
+                    id="password"
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    type={showPassword ? "text" : "password"}
+                    placeholder="At least 8 characters"
+                    className="w-full h-[46px] bg-white border border-gray-300 rounded-lg pl-4 pr-12 [font-family:'Archivo',Helvetica] font-normal text-base text-black focus:outline-none focus:border-[#2e5cef] focus:ring-1 focus:ring-[#2e5cef]"
+                  />
+                  <button
+                    type="button"
+                    aria-label={showPassword ? "Hide password" : "Show password"}
+                    onClick={() => setShowPassword((v) => !v)}
+                    className="absolute inset-y-0 right-3 my-auto h-8 w-8 grid place-items-center text-gray-600 hover:text-gray-900"
+                  >
+                    {showPassword ? (
+                      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="h-5 w-5">
+                        <path d="M3 3l18 18" />
+                        <path d="M10.58 10.58A2 2 0 0012 14a2 2 0 001.42-.58" />
+                        <path d="M17.94 17.94A10.94 10.94 0 0112 20c-5 0-9.27-3.11-11-8 1.02-2.8 2.98-5 5.37-6.37" />
+                        <path d="M9.88 4.24A10.94 10.94 0 0112 4c5 0 9.27 3.11 11 8-.62 1.71-1.62 3.22-2.87 4.45" />
+                      </svg>
+                    ) : (
+                      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="h-5 w-5">
+                        <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" />
+                        <circle cx="12" cy="12" r="3" />
+                      </svg>
+                    )}
+                  </button>
+                </div>
               </div>
 
               {error && (

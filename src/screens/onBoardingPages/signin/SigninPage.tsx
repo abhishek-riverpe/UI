@@ -1,7 +1,6 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { Button } from "../../../components/ui/button";
-import { api } from "../../../lib/api";
 import { BACKEND_URL } from "../../../lib/urls";
 import { useAppContext } from "../../../context/AppContext";
 import Header from "@/components/common/Header";
@@ -10,10 +9,11 @@ type Step = "email" | "password";
 
 export const SigninPage = (): JSX.Element => {
   const navigate = useNavigate();
-  const { setAuth } = useAppContext();
+  const { login } = useAppContext();
   const [step, setStep] = useState<Step>("email");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -31,27 +31,10 @@ export const SigninPage = (): JSX.Element => {
     setError(null);
     setLoading(true);
     try {
-      const res = await api.post("/api/v1/user/signin", {
-        username: email,
-        password,
-      });
-      const token = res.data?.access_token as string;
-      if (token) {
-        try {
-          const me = await api.get("/api/v1/user/me", {
-            headers: { Authorization: `Bearer ${token}` },
-          });
-          const { firstName = "", lastName = "" } = me.data || {};
-          setAuth(token, { username: email, firstName, lastName });
-        } catch {
-          setAuth(token, { username: email, firstName: "", lastName: "" });
-        }
-        navigate("/dashboard");
-      } else {
-        setError("Unexpected response from server.");
-      }
+      await login(email, password);
+      navigate("/dashboard");
     } catch (e: any) {
-      const msg = e?.response?.data?.detail || "Failed to sign in";
+      const msg = e?.response?.data?.message || e?.response?.data?.detail || "Failed to sign in";
       setError(msg);
     } finally {
       setLoading(false);
@@ -175,15 +158,39 @@ export const SigninPage = (): JSX.Element => {
                   >
                     Enter your password for {email}
                   </label>
-                  <input
-                    id="password"
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                    type="password"
-                    placeholder="Your password"
-                    className="w-full h-[48px] bg-white border border-gray-300 rounded-xl px-4 focus:outline-none focus:border-[#2e5cef] focus:ring-1 focus:ring-[#2e5cef]"
-                    style={{ fontFamily: "'Archivo', sans-serif", fontWeight: 400, fontSize: "16px", lineHeight: "1.09", color: "#000000" }}
-                  />
+                  <div className="relative">
+                    <input
+                      id="password"
+                      value={password}
+                      onChange={(e) => setPassword(e.target.value)}
+                      type={showPassword ? "text" : "password"}
+                      placeholder="Your password"
+                      className="w-full h-[48px] bg-white border border-gray-300 rounded-xl pl-4 pr-12 focus:outline-none focus:border-[#2e5cef] focus:ring-1 focus:ring-[#2e5cef]"
+                      style={{ fontFamily: "'Archivo', sans-serif", fontWeight: 400, fontSize: "16px", lineHeight: "1.09", color: "#000000" }}
+                    />
+                    <button
+                      type="button"
+                      aria-label={showPassword ? "Hide password" : "Show password"}
+                      onClick={() => setShowPassword((v) => !v)}
+                      className="absolute inset-y-0 right-3 my-auto h-8 w-8 grid place-items-center text-gray-600 hover:text-gray-900"
+                    >
+                      {showPassword ? (
+                        // Eye-off icon
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="h-5 w-5">
+                          <path d="M3 3l18 18" />
+                          <path d="M10.58 10.58A2 2 0 0012 14a2 2 0 001.42-.58" />
+                          <path d="M17.94 17.94A10.94 10.94 0 0112 20c-5 0-9.27-3.11-11-8 1.02-2.8 2.98-5 5.37-6.37" />
+                          <path d="M9.88 4.24A10.94 10.94 0 0112 4c5 0 9.27 3.11 11 8-.62 1.71-1.62 3.22-2.87 4.45" />
+                        </svg>
+                      ) : (
+                        // Eye icon
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="h-5 w-5">
+                          <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" />
+                          <circle cx="12" cy="12" r="3" />
+                        </svg>
+                      )}
+                    </button>
+                  </div>
                   {error && <div className="text-red-600 [font-family:'Archivo',Helvetica] text-sm">{error}</div>}
                   <div className="flex gap-2">
                     <Button
