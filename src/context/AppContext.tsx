@@ -5,7 +5,8 @@ import { AUTH_LOGOUT, AUTH_SIGNIN, AUTH_SIGNUP } from "../lib/urls";
 type User = {
   entity_id: string;
   email: string;
-  name?: string;
+  first_name?: string;
+  last_name?: string;
   status?: string;
 };
 
@@ -14,7 +15,7 @@ type AppContextType = {
   user: User | null;
   setAuth: (token: string, user?: User) => void;
   login: (email: string, password: string) => Promise<void>;
-  signup: (name: string, email: string, password: string) => Promise<void>;
+  signup: (first_name: string, last_name: string, email: string, password: string) => Promise<void>;
   logout: () => Promise<void>;
   clearAuth: () => void;
 };
@@ -74,8 +75,8 @@ export function AppProvider({ children }: { children: ReactNode }) {
     setAuth(access_token, user);
   };
 
-  const signup = async (name: string, email: string, password: string) => {
-    const res = await api.post(AUTH_SIGNUP, { name, email, password }, { headers: { "X-RP-Skip-Refresh": "1" } });
+  const signup = async (first_name: string, last_name: string, email: string, password: string) => {
+    const res = await api.post(AUTH_SIGNUP, { first_name, last_name, email, password }, { headers: { "X-RP-Skip-Refresh": "1" } });
     const { access_token, user } = res.data.data;
     setAuth(access_token, user);
   };

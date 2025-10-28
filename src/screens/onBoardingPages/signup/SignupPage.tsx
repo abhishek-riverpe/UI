@@ -8,7 +8,8 @@ import { BACKEND_URL } from "../../../lib/urls";
 export const Signup = (): JSX.Element => {
   const navigate = useNavigate();
   const { signup } = useAppContext();
-  const [name, setName] = useState("");
+  const [firstName, setFirstName] = useState("");
+  const [lastName, setLastName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
@@ -17,7 +18,8 @@ export const Signup = (): JSX.Element => {
 
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
   const canSubmit =
-    name.trim().length > 0 &&
+    firstName.trim().length > 0 &&
+    lastName.trim().length > 0 &&
     emailRegex.test(email) &&
     password.length >= 8;
 
@@ -26,7 +28,7 @@ export const Signup = (): JSX.Element => {
     setError(null);
     setLoading(true);
     try {
-      await signup(name.trim(), email, password);
+      await signup(firstName.trim(), lastName.trim(), email, password);
       navigate("/dashboard");
     } catch (e: any) {
       const msg = e?.response?.data?.message || e?.response?.data?.detail || "Failed to sign up";
@@ -90,13 +92,25 @@ export const Signup = (): JSX.Element => {
 
             <div className="flex flex-col gap-6">
               <div className="flex flex-col gap-2">
-                <label htmlFor="name" className="[font-family:'Archivo',Helvetica] font-normal text-base text-black tracking-[0] leading-[normal]">Name</label>
+                <label htmlFor="firstName" className="[font-family:'Archivo',Helvetica] font-normal text-base text-black tracking-[0] leading-[normal]">First name</label>
                 <input
-                  id="name"
-                  value={name}
-                  onChange={(e) => setName(e.target.value)}
+                  id="firstName"
+                  value={firstName}
+                  onChange={(e) => setFirstName(e.target.value)}
                   type="text"
-                  placeholder="Your full name"
+                  placeholder="John"
+                  className="w-full h-[46px] bg-white border border-gray-300 rounded-lg px-4 [font-family:'Archivo',Helvetica] font-normal text-base text-black focus:outline-none focus:border-[#2e5cef] focus:ring-1 focus:ring-[#2e5cef]"
+                />
+              </div>
+
+              <div className="flex flex-col gap-2">
+                <label htmlFor="lastName" className="[font-family:'Archivo',Helvetica] font-normal text-base text-black tracking-[0] leading-[normal]">Last name</label>
+                <input
+                  id="lastName"
+                  value={lastName}
+                  onChange={(e) => setLastName(e.target.value)}
+                  type="text"
+                  placeholder="Doe"
                   className="w-full h-[46px] bg-white border border-gray-300 rounded-lg px-4 [font-family:'Archivo',Helvetica] font-normal text-base text-black focus:outline-none focus:border-[#2e5cef] focus:ring-1 focus:ring-[#2e5cef]"
                 />
               </div>
