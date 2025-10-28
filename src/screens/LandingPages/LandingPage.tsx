@@ -181,6 +181,7 @@ export const LandingPage = (): JSX.Element => {
               {/* Mobile Action Buttons */}
               <div className="space-y-3 pt-4 border-t border-gray-200">
                 <Button
+                  onClick={() => navigate('/signin')}
                   variant="outline"
                   className="w-full h-auto px-6 py-4 bg-white rounded-lg border border-solid border-[#222222] hover:bg-gray-50"
                 >

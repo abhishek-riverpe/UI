@@ -1,15 +1,13 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
+import { api } from "../../lib/api";
+import { DEFAULT_ROUTING_ID, ZYNK_KYC_REQUIREMENTS } from "../../lib/urls";
+import { useAppContext } from "../../context/AppContext";
 import { 
   Clock, 
   CheckCircle, 
   XCircle, 
   AlertCircle, 
-  Upload, 
-  FileText, 
-  Image, 
-  X, 
-  Loader2,
-  CircleCheckBig
+  FileText
 } from "lucide-react";
 
 // Types for KYC states
@@ -32,6 +30,7 @@ interface KYCPageProps {
 export const KYCPage: React.FC<KYCPageProps> = ({ 
   currentStatus = 'additional_docs_required' 
 }) => {
+  const { user } = useAppContext();
   const [kycStatus, setKycStatus] = useState<KYCStatus>(currentStatus);
   const [uploadedDocuments, setUploadedDocuments] = useState<UploadedDocument[]>([
     {
@@ -51,11 +50,180 @@ export const KYCPage: React.FC<KYCPageProps> = ({
   ]);
   const [isDragOver, setIsDragOver] = useState(false);
 
-  // Required documents list
-  const requiredDocuments = [
-    'Proof of address (utility bill, bank statement, or government letter)',
-    'Bank statement (last 3 months)'
+  // Requirements fetched from backend (supports nested children)
+  type Requirement = {
+    fieldId: string;
+    fieldName: string;
+    fieldType: string;
+    fieldChoices: any[];
+    fieldRequired: boolean;
+    fieldDescription?: string | null;
+    fieldDefaultValue?: string | null;
+    isEditable?: boolean;
+    children?: Requirement[];
+  };
+  const [requirements, setRequirements] = useState<Array<Requirement>>([]);
+  const [loadingRequirements, setLoadingRequirements] = useState<boolean>(false);
+  const [requirementsError, setRequirementsError] = useState<string | null>(null);
+  const [documentRequirements, setDocumentRequirements] = useState<Array<{ id: string; name: string; required: boolean; description?: string | null }>>([]);
+
+  // Extract document fields from nested requirements
+  const extractDocumentRequirements = (nodes: Requirement[]): Array<{ id: string; name: string; required: boolean; description?: string | null }> => {
+    const list: Array<{ id: string; name: string; required: boolean; description?: string | null }> = [];
+    const walk = (arr: Requirement[]) => {
+      for (const n of arr) {
+        const t = String(n.fieldType || '').toLowerCase();
+        if (t === 'document') list.push({ id: n.fieldId, name: n.fieldName, required: !!n.fieldRequired, description: n.fieldDescription });
+        if (Array.isArray(n.children) && n.children.length) walk(n.children as any);
+      }
+    };
+    walk(nodes);
+    return list;
+  };
+
+  // Fallback sample to guarantee UI shows when API lacks document entries
+  const FALLBACK_SAMPLE_REQUIREMENTS: Requirement[] = [
+    {
+      fieldId: 'documents',
+      fieldName: 'Documents',
+      fieldType: 'section',
+      fieldChoices: [],
+      fieldRequired: true,
+      fieldDescription: 'Identity Documents',
+      fieldDefaultValue: null,
+      isEditable: true,
+      children: [
+        {
+          fieldId: 'pan_card',
+          fieldName: 'PAN Card',
+          fieldType: 'section',
+          fieldChoices: [],
+          fieldRequired: false,
+          fieldDescription: 'PAN Card',
+          fieldDefaultValue: null,
+          isEditable: true,
+          children: [
+            {
+              fieldId: 'document_value',
+              fieldName: 'PAN Number',
+              fieldType: 'string',
+              fieldChoices: [],
+              fieldRequired: false,
+              fieldDescription: 'PAN number',
+              fieldDefaultValue: null,
+              isEditable: true,
+            },
+            {
+              fieldId: 'document_content',
+              fieldName: 'PAN Card',
+              fieldType: 'document',
+              fieldChoices: [],
+              fieldRequired: false,
+              fieldDescription: 'Pan card document in base64 format',
+              fieldDefaultValue: null,
+              isEditable: true,
+            },
+          ],
+        },
+        {
+          fieldId: 'aadhar_card',
+          fieldName: 'Aadhar Card',
+          fieldType: 'section',
+          fieldChoices: [],
+          fieldRequired: false,
+          fieldDescription: 'Aadhar Card',
+          fieldDefaultValue: null,
+          isEditable: true,
+          children: [
+            {
+              fieldId: 'document_value',
+              fieldName: 'Aadhar Number',
+              fieldType: 'string',
+              fieldChoices: [],
+              fieldRequired: false,
+              fieldDescription: 'Aadhar number',
+              fieldDefaultValue: null,
+              isEditable: true,
+            },
+            {
+              fieldId: 'front_side',
+              fieldName: 'Aadhar Card Front',
+              fieldType: 'document',
+              fieldChoices: [],
+              fieldRequired: false,
+              fieldDescription: 'Front side of Aadhar Card',
+              fieldDefaultValue: null,
+              isEditable: true,
+            },
+            {
+              fieldId: 'back_side',
+              fieldName: 'Aadhar Card Back',
+              fieldType: 'document',
+              fieldChoices: [],
+              fieldRequired: false,
+              fieldDescription: 'Back side of Aadhar Card',
+              fieldDefaultValue: null,
+              isEditable: true,
+            },
+          ],
+        },
+        {
+          fieldId: 'photo',
+          fieldName: 'Photo',
+          fieldType: 'document',
+          fieldChoices: [],
+          fieldRequired: false,
+          fieldDescription: 'Photo',
+          fieldDefaultValue: null,
+          isEditable: true,
+        },
+      ],
+    },
   ];
+
+  // Filter out document-type nodes for the top (non-file) section
+  const removeDocumentNodes = (nodes: Requirement[]): Requirement[] => {
+    const walk = (arr: Requirement[]): Requirement[] =>
+      arr
+        .filter((n) => String(n.fieldType || '').toLowerCase() !== 'document')
+        .map((n) => ({
+          ...n,
+          children: Array.isArray(n.children) ? walk(n.children) : [],
+        }));
+    return walk(nodes);
+  };
+
+  // Whenever requirements change, derive the document list (with fallback)
+  useEffect(() => {
+    const docs = extractDocumentRequirements(requirements);
+    if (docs.length > 0) {
+      setDocumentRequirements(docs);
+    } else if (!loadingRequirements && !requirementsError) {
+      setDocumentRequirements(extractDocumentRequirements(FALLBACK_SAMPLE_REQUIREMENTS));
+    }
+  }, [requirements, loadingRequirements, requirementsError]);
+
+  useEffect(() => {
+    let isMounted = true;
+    const fetchReq = async () => {
+      setLoadingRequirements(true);
+      setRequirementsError(null);
+      try {
+        const res = await api.get(ZYNK_KYC_REQUIREMENTS(DEFAULT_ROUTING_ID));
+        const items = res?.data?.data?.kycRequirements || [];
+        if (isMounted) setRequirements(items);
+      } catch (e: any) {
+        if (isMounted) setRequirementsError(e?.response?.data?.message || e?.message || 'Failed to fetch requirements');
+      } finally {
+        if (isMounted) setLoadingRequirements(false);
+      }
+    };
+    // Only fetch if user is active and has external entity id
+    if ((user?.status || '').toUpperCase() === 'ACTIVE') fetchReq();
+    return () => {
+      isMounted = false;
+    };
+  }, [user]);
 
   // Get status badge styling
   const getStatusBadgeStyle = (status: KYCStatus) => {
@@ -344,7 +512,7 @@ export const KYCPage: React.FC<KYCPageProps> = ({
             </div>
           </div>
 
-          {/* Required Documents List */}
+          {/* Fill Required Fields (non-document) */}
           <div
             style={{
               padding: "clamp(16px, 3vw, 25px)",
@@ -362,45 +530,22 @@ export const KYCPage: React.FC<KYCPageProps> = ({
                   color: "#222222"
                 }}
               >
-                Required documents to submit
+                Fill required fields
               </h3>
             </div>
-            
-            <div className="flex flex-col" style={{ gap: "10px" }}>
-              {requiredDocuments.map((doc, index) => (
-                <div
-                  key={index}
-                  className="flex items-center"
-                  style={{
-                    gap: "12px",
-                    padding: "clamp(12px, 2.5vw, 18px) 12px",
-                    backgroundColor: "#EFEFEF",
-                    borderRadius: "8px"
-                  }}
-                >
-                  <div
-                    style={{
-                      width: "8px",
-                      height: "8px",
-                      backgroundColor: "#030213",
-                      borderRadius: "50%",
-                      flexShrink: 0
-                    }}
-                  />
-                  <span
-                    style={{
-                      fontFamily: "'Archivo', sans-serif",
-                      fontWeight: 400,
-                      fontSize: "clamp(13px, 2.5vw, 16px)",
-                      lineHeight: "1.25",
-                      color: "#000000"
-                    }}
-                  >
-                    {doc}
-                  </span>
-                </div>
-              ))}
-            </div>
+            {loadingRequirements && (
+              <div className="text-sm text-gray-600">Loading requirements…</div>
+            )}
+            {requirementsError && (
+              <div className="text-sm text-red-600">{requirementsError}</div>
+            )}
+            {!loadingRequirements && !requirementsError && (
+              <div className="flex flex-col" style={{ gap: "10px" }}>
+                {removeDocumentNodes(requirements).map((req, index) => (
+                  <RequirementItem key={req.fieldId || index} req={req} level={0} />
+                ))}
+              </div>
+            )}
           </div>
 
           {/* Upload Area */}
@@ -412,9 +557,130 @@ export const KYCPage: React.FC<KYCPageProps> = ({
               borderRadius: "16px"
             }}
           >
+            {/* Required Documents Rows based on requirements */}
+            {documentRequirements.length > 0 && (
+              <div className="flex flex-col" style={{ gap: "clamp(16px, 3vw, 24px)" }}>
+                <div className="flex flex-col" style={{ gap: "8px" }}>
+                  <h3
+                    style={{
+                      fontFamily: "'Neue Haas Grotesk Display Pro', -apple-system, BlinkMacSystemFont, sans-serif",
+                      fontWeight: 600,
+                      fontSize: "clamp(18px, 3.5vw, 24px)",
+                      lineHeight: "1.2",
+                      color: "#222222"
+                    }}
+                  >
+                    Upload required documents
+                  </h3>
+                </div>
+
+                <div className="flex flex-col" style={{ gap: "12px" }}>
+                  {documentRequirements.map((d) => (
+                    <div
+                      key={d.id}
+                      className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3"
+                      style={{
+                        padding: "clamp(12px, 2.5vw, 20px)",
+                        backgroundColor: "#FFFFFF",
+                        border: "1px solid #ACACAC",
+                        borderRadius: "8px"
+                      }}
+                    >
+                      <div className="flex items-center w-full sm:w-auto" style={{ gap: "clamp(12px, 3vw, 24px)" }}>
+                        <div className="flex items-center flex-1 min-w-0" style={{ gap: "clamp(12px, 2.5vw, 16px)" }}>
+                          <FileText size={24} color="#222222" className="flex-shrink-0" />
+                          <div className="flex flex-col flex-1 min-w-0" style={{ gap: "4px" }}>
+                            <span
+                              style={{
+                                fontFamily: "'Neue Haas Grotesk Display Pro', -apple-system, BlinkMacSystemFont, sans-serif",
+                                fontWeight: 600,
+                                fontSize: "clamp(13px, 2.5vw, 16px)",
+                                lineHeight: "1.25",
+                                color: "#000000",
+                                overflow: "hidden",
+                                textOverflow: "ellipsis",
+                                whiteSpace: "nowrap"
+                              }}
+                            >
+                              {d.name}
+                            </span>
+                            {d.description && (
+                              <span
+                                style={{
+                                  fontFamily: "'Archivo', sans-serif",
+                                  fontWeight: 400,
+                                  fontSize: "clamp(11px, 2vw, 12px)",
+                                  lineHeight: "1.67",
+                                  color: "#000000"
+                                }}
+                              >
+                                {d.description}
+                              </span>
+                            )}
+                          </div>
+                        </div>
+                        {/* Status chip placeholder */}
+                        <div
+                          className="flex items-center"
+                          style={{
+                            gap: "8px",
+                            padding: "4px 12px",
+                            backgroundColor: "#FFFBEB",
+                            border: "2px solid #D97706",
+                            borderRadius: "50px"
+                          }}
+                        >
+                          <Clock size={16} color="#92400E" />
+                          <span
+                            style={{
+                              fontFamily: "'Neue Haas Grotesk Display Pro', -apple-system, BlinkMacSystemFont, sans-serif",
+                              fontWeight: 600,
+                              fontSize: "clamp(13px, 2.5vw, 16px)",
+                              lineHeight: "1.5",
+                              color: "#92400E"
+                            }}
+                          >
+                            Pending
+                          </span>
+                        </div>
+                      </div>
+
+                      {/* Disabled upload button to match desired UI */}
+                      <div className="flex items-center w-full sm:w-auto justify-between sm:justify-end" style={{ gap: "clamp(12px, 2.5vw, 16px)" }}>
+                        <div
+                          className="flex items-center"
+                          style={{
+                            gap: "8px",
+                            padding: "4px 12px",
+                            backgroundColor: "#E2E2E2",
+                            border: "2px solid #575757",
+                            borderRadius: "50px",
+                            opacity: 0.6
+                          }}
+                        >
+                          <span
+                            style={{
+                              fontFamily: "'Neue Haas Grotesk Display Pro', -apple-system, BlinkMacSystemFont, sans-serif",
+                              fontWeight: 600,
+                              fontSize: "clamp(13px, 2.5vw, 16px)",
+                              lineHeight: "1.5",
+                              color: "#575757"
+                            }}
+                          >
+                            Upload (soon)
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+
             {/* Upload Zone */}
+             
             <div
-              className="flex flex-col items-center"
+              className="flex flex-col items-center hidden"
               style={{
                 gap: "clamp(16px, 4vw, 30px)",
                 padding: "clamp(16px, 3vw, 24px) 16px clamp(24px, 5vw, 48px)",
@@ -492,185 +758,34 @@ export const KYCPage: React.FC<KYCPageProps> = ({
                 </label>
               </div>
             </div>
-
-            {/* Uploaded Documents */}
-            {uploadedDocuments.length > 0 && (
-              <div className="flex flex-col" style={{ gap: "clamp(24px, 4vw, 40px)", marginTop: "clamp(24px, 4vw, 40px)" }}>
-                <div className="flex flex-col" style={{ gap: "12px" }}>
-                  <h3
-                    style={{
-                      fontFamily: "'Neue Haas Grotesk Display Pro', -apple-system, BlinkMacSystemFont, sans-serif",
-                      fontWeight: 600,
-                      fontSize: "clamp(18px, 3.5vw, 24px)",
-                      lineHeight: "1.2",
-                      color: "#222222"
-                    }}
-                  >
-                    Upload required documents
-                  </h3>
-                  <p
-                    style={{
-                      fontFamily: "'Archivo', sans-serif",
-                      fontWeight: 400,
-                      fontSize: "clamp(13px, 2.5vw, 16px)",
-                      lineHeight: "1.25",
-                      color: "#575757"
-                    }}
-                  >
-                    {uploadedDocuments.filter(doc => doc.status === 'uploaded').length} of 2 required documents uploaded
-                  </p>
-                </div>
-
-                {/* Document List */}
-                <div className="flex flex-col" style={{ gap: "12px" }}>
-                  {uploadedDocuments.map((doc) => (
-                    <div
-                      key={doc.id}
-                      className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3"
-                      style={{
-                        padding: "clamp(12px, 2.5vw, 20px)",
-                        backgroundColor: "#FFFFFF",
-                        border: "1px solid #ACACAC",
-                        borderRadius: "8px"
-                      }}
-                    >
-                      <div className="flex items-center w-full sm:w-auto" style={{ gap: "clamp(12px, 3vw, 24px)" }}>
-                        <div className="flex items-center flex-1 min-w-0" style={{ gap: "clamp(12px, 2.5vw, 16px)" }}>
-                          {doc.type === 'pdf' ? (
-                            <FileText size={24} color="#222222" className="flex-shrink-0" />
-                          ) : (
-                            <Image size={24} color="#222222" className="flex-shrink-0" />
-                          )}
-                          <div className="flex flex-col flex-1 min-w-0" style={{ gap: "4px" }}>
-                            <span
-                              style={{
-                                fontFamily: "'Neue Haas Grotesk Display Pro', -apple-system, BlinkMacSystemFont, sans-serif",
-                                fontWeight: 600,
-                                fontSize: "clamp(13px, 2.5vw, 16px)",
-                                lineHeight: "1.25",
-                                color: "#000000",
-                                overflow: "hidden",
-                                textOverflow: "ellipsis",
-                                whiteSpace: "nowrap"
-                              }}
-                            >
-                              {doc.name}
-                            </span>
-                            <span
-                              style={{
-                                fontFamily: "'Archivo', sans-serif",
-                                fontWeight: 400,
-                                fontSize: "clamp(11px, 2vw, 12px)",
-                                lineHeight: "1.67",
-                                color: "#000000"
-                              }}
-                            >
-                              {doc.size}
-                            </span>
-                          </div>
-                        </div>
-                        {doc.status === 'uploaded' && (
-                          <CircleCheckBig size={24} color="#1AAA7A" className="flex-shrink-0" />
-                        )}
-                        {doc.status === 'uploading' && (
-                          <Loader2 size={24} color="#005AEE" className="animate-spin flex-shrink-0" />
-                        )}
-                      </div>
-
-                      <div className="flex items-center w-full sm:w-auto justify-between sm:justify-end" style={{ gap: "clamp(12px, 2.5vw, 16px)" }}>
-                        {doc.status === 'uploaded' && (
-                          <div
-                            className="flex items-center"
-                            style={{
-                              gap: "8px",
-                              padding: "4px 12px",
-                              backgroundColor: "#E2F5EE",
-                              border: "2px solid #1FCB92",
-                              borderRadius: "50px"
-                            }}
-                          >
-                            <CheckCircle size={16} color="#137C59" />
-                            <span
-                              style={{
-                                fontFamily: "'Neue Haas Grotesk Display Pro', -apple-system, BlinkMacSystemFont, sans-serif",
-                                fontWeight: 600,
-                                fontSize: "clamp(13px, 2.5vw, 16px)",
-                                lineHeight: "1.5",
-                                color: "#137C59"
-                              }}
-                            >
-                              Uploaded
-                            </span>
-                          </div>
-                        )}
-                        {doc.status === 'uploading' && (
-                          <div
-                            className="flex items-center"
-                            style={{
-                              gap: "8px",
-                              padding: "4px 12px",
-                              backgroundColor: "#E2E2E2",
-                              border: "2px solid #575757",
-                              borderRadius: "50px"
-                            }}
-                          >
-                            <Loader2 size={16} color="#575757" className="animate-spin" />
-                            <span
-                              style={{
-                                fontFamily: "'Neue Haas Grotesk Display Pro', -apple-system, BlinkMacSystemFont, sans-serif",
-                                fontWeight: 600,
-                                fontSize: "clamp(13px, 2.5vw, 16px)",
-                                lineHeight: "1.5",
-                                color: "#575757"
-                              }}
-                            >
-                              Uploading
-                            </span>
-                          </div>
-                        )}
-                        <button
-                          onClick={() => removeDocument(doc.id)}
-                          style={{ cursor: "pointer" }}
-                          className="flex-shrink-0"
-                        >
-                          <X size={24} color="#000000" />
-                        </button>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            )}
+            
 
             {/* Submit Button */}
-            {uploadedDocuments.length >= 2 && (
-              <div className="flex justify-center" style={{ marginTop: "clamp(24px, 4vw, 40px)" }}>
-                <button
-                  onClick={handleSubmitDocuments}
-                  className="flex items-center justify-center w-full"
+            <div className="flex justify-center" style={{ marginTop: "clamp(24px, 4vw, 40px)" }}>
+              <button
+                onClick={handleSubmitDocuments}
+                className="flex items-center justify-center w-full"
+                style={{
+                  gap: "10px",
+                  padding: "clamp(12px, 2.5vw, 16px) clamp(16px, 3vw, 24px)",
+                  backgroundColor: "#005AEE",
+                  borderRadius: "12px",
+                  cursor: "pointer"
+                }}
+              >
+                <span
                   style={{
-                    gap: "10px",
-                    padding: "clamp(12px, 2.5vw, 16px) clamp(16px, 3vw, 24px)",
-                    backgroundColor: "#005AEE",
-                    borderRadius: "12px",
-                    // maxWidth: "791px",
-                    cursor: "pointer"
+                    fontFamily: "'Archivo', sans-serif",
+                    fontWeight: 700,
+                    fontSize: "clamp(14px, 2.5vw, 16px)",
+                    lineHeight: "1.088",
+                    color: "#FFFFFF"
                   }}
                 >
-                  <span
-                    style={{
-                      fontFamily: "'Archivo', sans-serif",
-                      fontWeight: 700,
-                      fontSize: "clamp(14px, 2.5vw, 16px)",
-                      lineHeight: "1.088",
-                      color: "#FFFFFF"
-                    }}
-                  >
-                    Submit documents
-                  </span>
-                </button>
-              </div>
-            )}
+                  Submit documents
+                </span>
+              </button>
+            </div>
           </div>
         </div>
       )}
@@ -718,3 +833,57 @@ export const KYCPage: React.FC<KYCPageProps> = ({
     </div>
   );
 };
+
+function RequirementItem({ req, level }: { req: any; level: number }) {
+  const isSection = String(req.fieldType).toLowerCase() === 'section';
+  const isDocument = String(req.fieldType).toLowerCase() === 'document';
+  const isString = String(req.fieldType).toLowerCase() === 'string';
+
+  return (
+    <div
+      style={{
+        padding: '12px',
+        backgroundColor: level === 0 ? '#EFEFEF' : '#FFFFFF',
+        border: '1px solid #ACACAC',
+        borderRadius: '8px',
+        marginLeft: level > 0 ? 12 : 0
+      }}
+    >
+      <div className="flex items-center justify-between" style={{ gap: '12px' }}>
+        <div className="flex items-center" style={{ gap: '12px' }}>
+          <div style={{ width: 8, height: 8, backgroundColor: '#030213', borderRadius: '50%' }} />
+          <div className="flex flex-col">
+            <span style={{ fontFamily: "'Archivo', sans-serif", fontWeight: 600, color: '#000000' }}>{req.fieldName}</span>
+            {req.fieldDescription && (
+              <span style={{ fontFamily: "'Archivo', sans-serif", fontWeight: 400, color: '#575757' }}>{req.fieldDescription}</span>
+            )}
+          </div>
+        </div>
+
+        {/* For documents show disabled upload, for strings show input */}
+        {isDocument && (
+          <div>
+            {/* Placeholder: real upload will be enabled later */}
+            <label className="text-sm font-medium mr-2">Upload</label>
+            <input type="file" disabled className="opacity-50 cursor-not-allowed" />
+          </div>
+        )}
+        {isString && (
+          <input
+            type="text"
+            placeholder={req.fieldDescription || req.fieldName}
+            className="border rounded px-2 py-1"
+          />
+        )}
+      </div>
+
+      {isSection && Array.isArray(req.children) && req.children.length > 0 && (
+        <div className="flex flex-col" style={{ gap: 10, marginTop: 10 }}>
+          {req.children.map((child: any, idx: number) => (
+            <RequirementItem key={child.fieldId || idx} req={child} level={level + 1} />
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
