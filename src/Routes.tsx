@@ -21,6 +21,7 @@ import { KYCPage } from "./screens/DashboardPages/KYCPage";
 import { SupportPage } from "./screens/DashboardPages/SupportPage";
 import { ProfileSettingsPage } from "./screens/DashboardPages/ProfileSettingsPage";
 import OAuthCallback from "./screens/OAuthCallback";
+import CompleteProfile from "./screens/onBoardingPages/CompleteProfile";
 
 export default function App() {
   return (
@@ -31,6 +32,7 @@ export default function App() {
       <Route path="/signin" element={<GuestRoute><SigninPage /></GuestRoute>} />
       <Route path="/account-type" element={<AccountType />} />
       <Route path="/oauth/callback" element={<OAuthCallback />} />
+      <Route path="/complete-profile" element={<ProtectedRoute><CompleteProfile /></ProtectedRoute>} />
       <Route path="/verify-identityStep-1" element={<VerifyIdentityStep1/>} />
       <Route path="/verify-identityStep-2" element={<VerifyIdentityStep2/>} />
       <Route path="/verify-identityStep-3" element={<SelectIDType/>} />

@@ -4,27 +4,21 @@ import Profile from "../ui/Profile";
 import { useAppContext } from "../../context/AppContext";
 
 type HeaderProps = {
-  userName?: string;
   userImageSrc?: string;
-  onProfileClick?: () => void;
 };
 
 const Header = ({
-  userName,
   userImageSrc = "/Profile.svg",
-  onProfileClick,
 }: HeaderProps): JSX.Element => {
   const navigate = useNavigate();
   const { user, clearAuth } = useAppContext();
   const [open, setOpen] = useState(false);
-  const [showEmail, setShowEmail] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
 
-  const displayName = userName || user?.firstName || user?.username || "User";
+  const displayName = user?.first_name ? `${user?.first_name ?? ""} ${user?.last_name ?? ""}`.trim() : "User";
 
   const handleProfileClick = () => {
     setOpen((v) => !v);
-    onProfileClick?.();
   };
 
   const handleLogout = () => {
@@ -67,11 +61,8 @@ const Header = ({
           <div className="absolute right-0 mt-2 w-56 rounded-xl border border-gray-200 bg-white shadow-lg p-3 z-50">
             <div className="px-3 py-2">
               <p className="text-sm font-medium text-gray-900 truncate">
-                {user?.firstName || user?.lastName ? `${user?.firstName ?? ""} ${user?.lastName ?? ""}`.trim() : displayName}
+                {user?.first_name ? `${user?.first_name ?? ""} ${user?.last_name ?? ""}`.trim() : displayName}
               </p>
-              {user?.username && (
-                <p className="text-xs text-gray-500 truncate">{user.username}</p>
-              )}
             </div>
             <div className="h-px bg-gray-200 my-2" />
             <button
