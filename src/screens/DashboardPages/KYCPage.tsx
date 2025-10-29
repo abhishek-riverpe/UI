@@ -1,12 +1,12 @@
 import React, { useEffect, useState } from "react";
 import { api } from "../../lib/api";
-import { DEFAULT_ROUTING_ID, ZYNK_KYC_REQUIREMENTS } from "../../lib/urls";
+import { DEFAULT_ROUTING_ID, ZYNK_KYC_REQUIREMENTS, ZYNK_SUBMIT_KYC } from "../../lib/urls";
 import { useAppContext } from "../../context/AppContext";
-import { 
-  Clock, 
-  CheckCircle, 
-  XCircle, 
-  AlertCircle, 
+import {
+  Clock,
+  CheckCircle,
+  XCircle,
+  AlertCircle,
   FileText
 } from "lucide-react";
 
@@ -27,8 +27,12 @@ interface KYCPageProps {
   currentStatus?: KYCStatus;
 }
 
-export const KYCPage: React.FC<KYCPageProps> = ({ 
-  currentStatus = 'additional_docs_required' 
+interface FormData {
+  [fieldId: string]: string | File | null;
+}
+
+export const KYCPage: React.FC<KYCPageProps> = ({
+  currentStatus = 'additional_docs_required'
 }) => {
   const { user } = useAppContext();
   const [kycStatus, setKycStatus] = useState<KYCStatus>(currentStatus);
@@ -41,7 +45,7 @@ export const KYCPage: React.FC<KYCPageProps> = ({
       status: 'uploaded'
     },
     {
-      id: '2', 
+      id: '2',
       name: 'Bank Statement - Jane Doe.pdf',
       size: '99.57 KB',
       type: 'pdf',
@@ -49,6 +53,12 @@ export const KYCPage: React.FC<KYCPageProps> = ({
     }
   ]);
   const [isDragOver, setIsDragOver] = useState(false);
+
+  // Form data state for all inputs and file uploads
+  const [formData, setFormData] = useState<FormData>({});
+  const [documentStatuses, setDocumentStatuses] = useState<{[fieldId: string]: DocumentStatus}>({});
+  const [submitting, setSubmitting] = useState(false);
+  const [submitError, setSubmitError] = useState<string | null>(null);
 
   // Requirements fetched from backend (supports nested children)
   type Requirement = {
@@ -225,6 +235,154 @@ export const KYCPage: React.FC<KYCPageProps> = ({
     };
   }, [user]);
 
+  // Handle input changes for form fields
+  const handleFormInputChange = (fieldId: string, value: string) => {
+    setFormData(prev => ({
+      ...prev,
+      [fieldId]: value
+    }));
+  };
+
+  // Handle file upload
+  const handleFileUpload = (fieldId: string, file: File) => {
+    setDocumentStatuses(prev => ({
+      ...prev,
+      [fieldId]: 'uploading' as DocumentStatus
+    }));
+
+    setFormData(prev => ({
+      ...prev,
+      [fieldId]: file
+    }));
+
+    // Convert to base64
+    const reader = new FileReader();
+    reader.onload = () => {
+      const base64 = reader.result as string;
+      setFormData(prev => ({
+        ...prev,
+        [fieldId]: base64
+      }));
+
+      setDocumentStatuses(prev => ({
+        ...prev,
+        [fieldId]: 'uploaded' as DocumentStatus
+      }));
+    };
+    reader.onerror = () => {
+      setDocumentStatuses(prev => ({
+        ...prev,
+        [fieldId]: 'failed' as DocumentStatus
+      }));
+    };
+    reader.readAsDataURL(file);
+  };
+
+  // Submit KYC data
+  const handleSubmitKYC = async () => {
+    if (!user?.external_entity_id) {
+      setSubmitError('User entity ID not found');
+      return;
+    }
+
+    setSubmitting(true);
+    setSubmitError(null);
+
+    try {
+      // Build simplified payload for personal_details
+      const payload = buildSimplePayload(formData);
+      console.log('Frontend sending payload:', payload);
+      const res = await api.post(ZYNK_SUBMIT_KYC(user.external_entity_id, DEFAULT_ROUTING_ID), payload);
+
+      if (res.data?.success) {
+        setKycStatus('in_review');
+      } else {
+        throw new Error('Submission failed');
+      }
+    } catch (error: any) {
+      setSubmitError(error?.response?.data?.message || error?.message || 'Failed to submit KYC');
+    } finally {
+      setSubmitting(false);
+    }
+  };
+
+  // Build simple payload structure for personal_details
+  const buildSimplePayload = (formData: FormData) => {
+    const personalDetails: any = {};
+
+    // Collect all text inputs
+    const textInputs: string[] = [];
+    const base64Images: string[] = [];
+
+    Object.keys(formData).forEach(key => {
+      const value = formData[key];
+      if (typeof value === 'string') {
+        if (value.startsWith('data:')) {
+          // This is a base64 encoded image
+          base64Images.push(value);
+        } else if (value.trim()) {
+          // This is a text input - use the key name for field name
+          const fieldName = key.split('.').pop() || key; // Get last part of key
+          if (fieldName === 'document_value') {
+            // Map document_value fields to appropriate personal_details fields
+            if (key.includes('pan_card')) {
+              personalDetails.full_name = value;
+            } else if (key.includes('aadhar_card')) {
+              personalDetails.date_of_birth = value;
+            }
+          } else {
+            // Other text fields
+            personalDetails[fieldName] = value;
+          }
+        }
+      }
+    });
+
+    // Combine all base64 images into a single comma-separated string
+    if (base64Images.length > 0) {
+      personalDetails.identity_document = base64Images.join(',');
+    }
+
+    return {
+      personal_details: personalDetails
+    };
+  };
+
+  // Build payload structure according to Zynk Labs API requirements
+  const buildNestedPayload = (nodes: Requirement[], formData: FormData) => {
+    const payload: any = {
+      personal_details: {}
+    };
+
+    // Walk through requirements and map to correct payload structure
+    const walk = (arr: Requirement[], parentPath: string = '') => {
+      for (const node of arr) {
+        const fieldPath = parentPath ? `${parentPath}.${node.fieldId}` : node.fieldId;
+
+        if (node.fieldType === 'section' && node.children) {
+          // Recursively process children
+          walk(node.children, fieldPath);
+        } else if (node.fieldType === 'string') {
+          // Map string fields to personal_details
+          if (fieldPath.includes('pan_card.document_value')) {
+            payload.personal_details.full_name = formData[fieldPath] || null;
+          } else if (fieldPath.includes('aadhar_card.document_value')) {
+            payload.personal_details.date_of_birth = formData[fieldPath] || null;
+          }
+        } else if (node.fieldType === 'document') {
+          // Map document files (base64) to identity_document
+          // For now, use the first document found, or handle multiple if needed
+          if (formData[fieldPath] && typeof formData[fieldPath] === 'string') {
+            payload.personal_details.identity_document = formData[fieldPath];
+          }
+        }
+      }
+    };
+
+    walk(nodes);
+    return payload;
+  };
+
   // Get status badge styling
   const getStatusBadgeStyle = (status: KYCStatus) => {
     switch (status) {
@@ -314,11 +472,8 @@ export const KYCPage: React.FC<KYCPageProps> = ({
     }
   };
 
-  const statusContent = getVerificationStatusContent();
-  const statusBadge = getStatusBadgeStyle(kycStatus);
-
-  // Handle file upload
-  const handleFileUpload = (files: FileList | null) => {
+  // Legacy file upload handler (for drag & drop)
+  const handleGeneralFileUpload = (files: FileList | null) => {
     if (!files) return;
 
     Array.from(files).forEach(file => {
@@ -335,9 +490,9 @@ export const KYCPage: React.FC<KYCPageProps> = ({
 
       // Simulate upload progress
       setTimeout(() => {
-        setUploadedDocuments(prev => 
-          prev.map(doc => 
-            doc.id === newDoc.id 
+        setUploadedDocuments(prev =>
+          prev.map(doc =>
+            doc.id === newDoc.id
               ? { ...doc, status: 'uploaded' as DocumentStatus }
               : doc
           )
@@ -359,12 +514,12 @@ export const KYCPage: React.FC<KYCPageProps> = ({
   const handleDrop = (e: React.DragEvent) => {
     e.preventDefault();
     setIsDragOver(false);
-    handleFileUpload(e.dataTransfer.files);
+    handleGeneralFileUpload(e.dataTransfer.files);
   };
 
   // Handle file input change
   const handleFileInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    handleFileUpload(e.target.files);
+    handleGeneralFileUpload(e.target.files);
   };
 
   // Remove document
@@ -372,15 +527,16 @@ export const KYCPage: React.FC<KYCPageProps> = ({
     setUploadedDocuments(prev => prev.filter(doc => doc.id !== id));
   };
 
-  // Submit documents
+  // Submit documents (legacy)
   const handleSubmitDocuments = () => {
-    if (uploadedDocuments.length >= 2) {
-      setKycStatus('in_review');
-    }
+    handleSubmitKYC();
   };
 
+  const statusContent = getVerificationStatusContent();
+  const statusBadge = getStatusBadgeStyle(kycStatus);
+
   return (
-    <div className="w-full flex flex-col px-4 sm:px-6 md:px-8" 
+    <div className="w-full flex flex-col px-4 sm:px-6 md:px-8"
       style={{ gap: "clamp(24px, 5vw, 40px)" }}
     >
       {/* Page Title */}
@@ -474,7 +630,7 @@ export const KYCPage: React.FC<KYCPageProps> = ({
               color: statusBadge.textColor
             }}
           >
-            {kycStatus === 'additional_docs_required' ? 'Pending' : 
+            {kycStatus === 'additional_docs_required' ? 'Pending' :
              kycStatus === 'in_review' ? 'Pending' :
              kycStatus.charAt(0).toUpperCase() + kycStatus.slice(1)}
           </span>
@@ -542,7 +698,14 @@ export const KYCPage: React.FC<KYCPageProps> = ({
             {!loadingRequirements && !requirementsError && (
               <div className="flex flex-col" style={{ gap: "10px" }}>
                 {removeDocumentNodes(requirements).map((req, index) => (
-                  <RequirementItem key={req.fieldId || index} req={req} level={0} />
+                  <RequirementItem
+                    key={req.fieldId || index}
+                    req={req}
+                    level={0}
+                    formData={formData}
+                    onInputChange={handleFormInputChange}
+                    parentPath={req.fieldId}
+                  />
                 ))}
               </div>
             )}
@@ -619,44 +782,55 @@ export const KYCPage: React.FC<KYCPageProps> = ({
                             )}
                           </div>
                         </div>
-                        {/* Status chip placeholder */}
+                        {/* Dynamic status chip based on document status */}
                         <div
                           className="flex items-center"
                           style={{
                             gap: "8px",
                             padding: "4px 12px",
-                            backgroundColor: "#FFFBEB",
-                            border: "2px solid #D97706",
+                            backgroundColor: documentStatuses[d.id] === 'uploaded' ? '#E2F5EE' :
+                                           documentStatuses[d.id] === 'uploading' ? '#EFF6FF' :
+                                           documentStatuses[d.id] === 'failed' ? '#FEF2F2' : '#FFFBEB',
+                            border: `2px solid ${documentStatuses[d.id] === 'uploaded' ? '#1FCB92' :
+                                               documentStatuses[d.id] === 'uploading' ? '#3B82F6' :
+                                               documentStatuses[d.id] === 'failed' ? '#EF4444' : '#D97706'}`,
                             borderRadius: "50px"
                           }}
                         >
-                          <Clock size={16} color="#92400E" />
+                          {(documentStatuses[d.id] === 'uploaded' && <CheckCircle size={16} color="#137C59" />) ||
+                           (documentStatuses[d.id] === 'uploading' && <Clock size={16} color="#1D4ED8" />) ||
+                           (documentStatuses[d.id] === 'failed' && <XCircle size={16} color="#DC2626" />) ||
+                           <Clock size={16} color="#92400E" />}
                           <span
                             style={{
                               fontFamily: "'Neue Haas Grotesk Display Pro', -apple-system, BlinkMacSystemFont, sans-serif",
                               fontWeight: 600,
                               fontSize: "clamp(13px, 2.5vw, 16px)",
                               lineHeight: "1.5",
-                              color: "#92400E"
+                              color: documentStatuses[d.id] === 'uploaded' ? '#137C59' :
+                                     documentStatuses[d.id] === 'uploading' ? '#1D4ED8' :
+                                     documentStatuses[d.id] === 'failed' ? '#DC2626' : '#92400E'
                             }}
                           >
-                            Pending
+                            {documentStatuses[d.id] === 'uploaded' ? 'Uploaded' :
+                             documentStatuses[d.id] === 'uploading' ? 'Uploading' :
+                             documentStatuses[d.id] === 'failed' ? 'Failed' : 'Pending'}
                           </span>
                         </div>
                       </div>
 
-                      {/* Disabled upload button to match desired UI */}
+                      {/* Enabled upload button */}
                       <div className="flex items-center w-full sm:w-auto justify-between sm:justify-end" style={{ gap: "clamp(12px, 2.5vw, 16px)" }}>
                         <div
                           className="flex items-center"
                           style={{
                             gap: "8px",
                             padding: "4px 12px",
-                            backgroundColor: "#E2E2E2",
-                            border: "2px solid #575757",
+                            backgroundColor: "#005AEE",
                             borderRadius: "50px",
-                            opacity: 0.6
+                            cursor: "pointer"
                           }}
+                          onClick={() => document.getElementById(`file-input-${d.id}`)?.click()}
                         >
                           <span
                             style={{
@@ -664,12 +838,22 @@ export const KYCPage: React.FC<KYCPageProps> = ({
                               fontWeight: 600,
                               fontSize: "clamp(13px, 2.5vw, 16px)",
                               lineHeight: "1.5",
-                              color: "#575757"
+                              color: "#FFFFFF"
                             }}
                           >
-                            Upload (soon)
+                            Upload
                           </span>
                         </div>
+                        <input
+                          id={`file-input-${d.id}`}
+                          type="file"
+                          accept=".jpg,.jpeg,.png,.pdf"
+                          style={{ display: 'none' }}
+                          onChange={(e) => {
+                            const file = e.target.files?.[0];
+                            if (file) handleFileUpload(d.id, file);
+                          }}
+                        />
                       </div>
                     </div>
                   ))}
@@ -678,13 +862,12 @@ export const KYCPage: React.FC<KYCPageProps> = ({
             )}
 
             {/* Upload Zone */}
-             
             <div
-              className="flex flex-col items-center hidden"
+              className="flex flex-col items-center"
               style={{
                 gap: "clamp(16px, 4vw, 30px)",
                 padding: "clamp(16px, 3vw, 24px) 16px clamp(24px, 5vw, 48px)",
-                border: `1px dashed #ACACAC`,
+                border: `1px dashed ${isDragOver ? "#005AEE" : "#ACACAC"}`,
                 borderRadius: "8px",
                 backgroundColor: isDragOver ? "#F8F9FA" : "transparent"
               }}
@@ -758,19 +941,26 @@ export const KYCPage: React.FC<KYCPageProps> = ({
                 </label>
               </div>
             </div>
-            
+
+            {/* Error Message */}
+            {submitError && (
+              <div className="text-center text-red-600 text-sm mt-4">
+                {submitError}
+              </div>
+            )}
 
             {/* Submit Button */}
             <div className="flex justify-center" style={{ marginTop: "clamp(24px, 4vw, 40px)" }}>
               <button
-                onClick={handleSubmitDocuments}
+                onClick={handleSubmitKYC}
+                disabled={submitting}
                 className="flex items-center justify-center w-full"
                 style={{
                   gap: "10px",
                   padding: "clamp(12px, 2.5vw, 16px) clamp(16px, 3vw, 24px)",
-                  backgroundColor: "#005AEE",
+                  backgroundColor: submitting ? "#CCCCCC" : "#005AEE",
                   borderRadius: "12px",
-                  cursor: "pointer"
+                  cursor: submitting ? "not-allowed" : "pointer"
                 }}
               >
                 <span
@@ -782,7 +972,7 @@ export const KYCPage: React.FC<KYCPageProps> = ({
                     color: "#FFFFFF"
                   }}
                 >
-                  Submit documents
+                  {submitting ? 'Submitting...' : 'Submit documents'}
                 </span>
               </button>
             </div>
@@ -824,8 +1014,8 @@ export const KYCPage: React.FC<KYCPageProps> = ({
               color: "#575757"
             }}
           >
-            {kycStatus === 'verified' 
-              ? 'Your identity has been successfully verified.' 
+            {kycStatus === 'verified'
+              ? 'Your identity has been successfully verified.'
               : 'We\'re reviewing your details—no action needed; we\'ll notify you when it\'s done.'}
           </p>
         </div>
@@ -834,10 +1024,20 @@ export const KYCPage: React.FC<KYCPageProps> = ({
   );
 };
 
-function RequirementItem({ req, level }: { req: any; level: number }) {
+function RequirementItem({ req, level, formData, onInputChange, parentPath }: {
+  req: any;
+  level: number;
+  formData: FormData;
+  onInputChange: (fieldId: string, value: string) => void;
+  parentPath?: string;
+}) {
   const isSection = String(req.fieldType).toLowerCase() === 'section';
   const isDocument = String(req.fieldType).toLowerCase() === 'document';
   const isString = String(req.fieldType).toLowerCase() === 'string';
+
+  // Create unique field ID with parent path (e.g., "pan_card.document_value")
+  const uniqueFieldId = parentPath ? `${parentPath}.${req.fieldId}` : req.fieldId;
+  const childParentPath = uniqueFieldId;
 
   return (
     <div
@@ -860,19 +1060,14 @@ function RequirementItem({ req, level }: { req: any; level: number }) {
           </div>
         </div>
 
-        {/* For documents show disabled upload, for strings show input */}
-        {isDocument && (
-          <div>
-            {/* Placeholder: real upload will be enabled later */}
-            <label className="text-sm font-medium mr-2">Upload</label>
-            <input type="file" disabled className="opacity-50 cursor-not-allowed" />
-          </div>
-        )}
+        {/* For strings show controlled input */}
         {isString && (
           <input
             type="text"
+            value={formData[uniqueFieldId] ? String(formData[uniqueFieldId]) : ''}
             placeholder={req.fieldDescription || req.fieldName}
-            className="border rounded px-2 py-1"
+            onChange={(e) => onInputChange(uniqueFieldId, e.target.value)}
+            className="border border-gray-300 rounded px-2 py-1"
           />
         )}
       </div>
@@ -880,7 +1075,14 @@ function RequirementItem({ req, level }: { req: any; level: number }) {
       {isSection && Array.isArray(req.children) && req.children.length > 0 && (
         <div className="flex flex-col" style={{ gap: 10, marginTop: 10 }}>
           {req.children.map((child: any, idx: number) => (
-            <RequirementItem key={child.fieldId || idx} req={child} level={level + 1} />
+            <RequirementItem
+              key={child.fieldId || idx}
+              req={child}
+              level={level + 1}
+              formData={formData}
+              onInputChange={onInputChange}
+              parentPath={childParentPath}
+            />
           ))}
         </div>
       )}
